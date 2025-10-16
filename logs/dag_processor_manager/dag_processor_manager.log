@@ -763,3 +763,4 @@ File Path                                                                       
 [2025-10-16T14:14:02.001+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/dags
 [2025-10-16T14:14:02.004+0000] {manager.py:740} INFO - There are 0 files in /opt/airflow/dags
 [2025-10-16T14:19:02.085+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/dags
+[2025-10-16T14:19:02.088+0000] {manager.py:740} INFO - There are 0 files in /opt/airflow/dags
