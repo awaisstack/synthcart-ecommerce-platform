@@ -1,0 +1,162 @@
+[2025-10-22T12:01:50.117+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T12:01:50.136+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: silver_layer_dag.clean_product_data scheduled__2025-10-20T19:00:00+00:00 [queued]>
+[2025-10-22T12:01:50.142+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: silver_layer_dag.clean_product_data scheduled__2025-10-20T19:00:00+00:00 [queued]>
+[2025-10-22T12:01:50.145+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-22T12:01:50.177+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): clean_product_data> on 2025-10-20 19:00:00+00:00
+[2025-10-22T12:01:50.184+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=612) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T12:01:50.185+0000] {standard_task_runner.py:63} INFO - Started process 617 to run task
+[2025-10-22T12:01:50.185+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'silver_layer_dag', 'clean_product_data', 'scheduled__2025-10-20T19:00:00+00:00', '--job-id', '13', '--raw', '--subdir', 'DAGS_FOLDER/silver_layer_dag.py', '--cfg-path', '/tmp/tmpti6hkw5j']
+[2025-10-22T12:01:50.187+0000] {standard_task_runner.py:91} INFO - Job 13: Subtask clean_product_data
+[2025-10-22T12:01:50.251+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T12:01:50.279+0000] {task_command.py:426} INFO - Running <TaskInstance: silver_layer_dag.clean_product_data scheduled__2025-10-20T19:00:00+00:00 [running]> on host 106a2f4786f4
+[2025-10-22T12:01:50.448+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='data_team' AIRFLOW_CTX_DAG_ID='silver_layer_dag' AIRFLOW_CTX_TASK_ID='clean_product_data' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T19:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T19:00:00+00:00'
+[2025-10-22T12:01:50.451+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T12:01:50.468+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T12:01:50.469+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\necho "== Clean product data =="\npython3 - <<\'PY\'\n\nimport os\nfrom pyspark.sql import SparkSession, functions as F\nfrom pyspark.sql.types import StringType, FloatType\n\n# set credentials and local ip inside runtime process\nos.environ[\'AWS_ACCESS_KEY_ID\'] = \'minioadmin\'\nos.environ[\'AWS_SECRET_ACCESS_KEY\'] = \'minioadmin\'\nos.environ[\'SPARK_LOCAL_IP\'] = \'127.0.0.1\'\n\n# create spark session (packages used to access s3a and aws jars)\nspark = SparkSession.builder \\\n    .appName("SilverLayerProcessing") \\\n    .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \\\n    .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.secret.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \\\n    .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-s3:1.12.570") \\\n    .getOrCreate()\n\nfrom minio import Minio\nclient = Minio("minio:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)\n\n# ensure buckets exist (idempotent)\nfor b in ["bronze", "silver"]:\n    try:\n        if not client.bucket_exists(b):\n            client.make_bucket(b)\n    except Exception as e:\n        # keep going; bucket checks often fail if MinIO not yet fully ready — error will surface when reading\n        print("minio bucket check:", e)\n\n# define s3a paths\nBRONZE_PATH = "s3a://bronze"\nSILVER_PATH = "s3a://silver"\n\ntry:\n    df = spark.read.option("header", "true").csv(f"{BRONZE_PATH}/products/products.csv")\n    print("Raw products rows:", df.count())\n\n    df_cleaned = df.dropDuplicates(["id"])         .na.drop(subset=["id", "title"])         .withColumn("description", F.coalesce(F.col("description"), F.lit("No description")))         .withColumn("price", F.col("price").cast(FloatType()))         .filter(F.col("price").isNotNull())         .filter(F.col("price") > 0)         .withColumn("title", F.trim(F.col("title")))         .withColumn("category", F.initcap(F.trim(F.col("category"))))         .withColumn("brand", F.coalesce(F.col("brand"), F.lit("Unknown")))         .withColumn("price_category",\n            F.when(F.col("price") < 50, "Budget")\n             .when((F.col("price") >= 50) & (F.col("price") < 200), "Mid-range")\n             .when((F.col("price") >= 200) & (F.col("price") < 1000), "Premium")\n             .otherwise("Luxury"))\n\n    df_cleaned.write.mode("overwrite").option("header", "true").csv(f"{SILVER_PATH}/products/products_cleaned_pyspark.csv")\n    print("✅ Products cleaned and saved.")\nexcept Exception as e:\n    print("Error cleaning products:", e)\n    raise\nfinally:\n    spark.stop()\nPY']
+[2025-10-22T12:01:50.481+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T12:01:50.482+0000] {subprocess.py:93} INFO - == Clean product data ==
+[2025-10-22T12:01:51.401+0000] {subprocess.py:93} INFO - WARNING: Using incubator modules: jdk.incubator.vector
+[2025-10-22T12:01:52.841+0000] {subprocess.py:93} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.12/site-packages/pyspark/jars/ivy-2.5.3.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2025-10-22T12:01:52.928+0000] {subprocess.py:93} INFO - Ivy Default Cache set to: /home/***/.ivy2.5.2/cache
+[2025-10-22T12:01:52.929+0000] {subprocess.py:93} INFO - The jars for the packages stored in: /home/***/.ivy2.5.2/jars
+[2025-10-22T12:01:52.932+0000] {subprocess.py:93} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2025-10-22T12:01:52.933+0000] {subprocess.py:93} INFO - com.amazonaws#aws-java-sdk-s3 added as a dependency
+[2025-10-22T12:01:52.933+0000] {subprocess.py:93} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-ffb06716-8741-478b-9b87-a89a39795400;1.0
+[2025-10-22T12:01:52.934+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T12:01:53.113+0000] {subprocess.py:93} INFO - 	found org.apache.hadoop#hadoop-aws;3.3.4 in central
+[2025-10-22T12:01:53.149+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2025-10-22T12:01:53.185+0000] {subprocess.py:93} INFO - 	found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+[2025-10-22T12:01:53.217+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-s3;1.12.570 in central
+[2025-10-22T12:01:53.241+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-kms;1.12.570 in central
+[2025-10-22T12:01:53.270+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-core;1.12.570 in central
+[2025-10-22T12:01:53.300+0000] {subprocess.py:93} INFO - 	found commons-logging#commons-logging;1.1.3 in central
+[2025-10-22T12:01:53.325+0000] {subprocess.py:93} INFO - 	found commons-codec#commons-codec;1.15 in central
+[2025-10-22T12:01:53.352+0000] {subprocess.py:93} INFO - 	found org.apache.httpcomponents#httpclient;4.5.13 in central
+[2025-10-22T12:01:53.380+0000] {subprocess.py:93} INFO - 	found org.apache.httpcomponents#httpcore;4.4.13 in central
+[2025-10-22T12:01:53.436+0000] {subprocess.py:93} INFO - 	found software.amazon.ion#ion-java;1.0.2 in central
+[2025-10-22T12:01:53.484+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-databind;2.12.7.1 in central
+[2025-10-22T12:01:53.533+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-annotations;2.12.7 in central
+[2025-10-22T12:01:53.584+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-core;2.12.7 in central
+[2025-10-22T12:01:53.617+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.dataformat#jackson-dataformat-cbor;2.12.6 in central
+[2025-10-22T12:01:53.652+0000] {subprocess.py:93} INFO - 	found joda-time#joda-time;2.8.1 in central
+[2025-10-22T12:01:53.688+0000] {subprocess.py:93} INFO - 	found com.amazonaws#jmespath-java;1.12.570 in central
+[2025-10-22T12:01:53.758+0000] {subprocess.py:93} INFO - :: resolution report :: resolve 784ms :: artifacts dl 41ms
+[2025-10-22T12:01:53.759+0000] {subprocess.py:93} INFO - 	:: modules in use:
+[2025-10-22T12:01:53.760+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2025-10-22T12:01:53.761+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-core;1.12.570 from central in [default]
+[2025-10-22T12:01:53.762+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-kms;1.12.570 from central in [default]
+[2025-10-22T12:01:53.763+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-s3;1.12.570 from central in [default]
+[2025-10-22T12:01:53.763+0000] {subprocess.py:93} INFO - 	com.amazonaws#jmespath-java;1.12.570 from central in [default]
+[2025-10-22T12:01:53.764+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-annotations;2.12.7 from central in [default]
+[2025-10-22T12:01:53.764+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-core;2.12.7 from central in [default]
+[2025-10-22T12:01:53.765+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-databind;2.12.7.1 from central in [default]
+[2025-10-22T12:01:53.765+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.dataformat#jackson-dataformat-cbor;2.12.6 from central in [default]
+[2025-10-22T12:01:53.766+0000] {subprocess.py:93} INFO - 	commons-codec#commons-codec;1.15 from central in [default]
+[2025-10-22T12:01:53.766+0000] {subprocess.py:93} INFO - 	commons-logging#commons-logging;1.1.3 from central in [default]
+[2025-10-22T12:01:53.767+0000] {subprocess.py:93} INFO - 	joda-time#joda-time;2.8.1 from central in [default]
+[2025-10-22T12:01:53.768+0000] {subprocess.py:93} INFO - 	org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+[2025-10-22T12:01:53.768+0000] {subprocess.py:93} INFO - 	org.apache.httpcomponents#httpclient;4.5.13 from central in [default]
+[2025-10-22T12:01:53.769+0000] {subprocess.py:93} INFO - 	org.apache.httpcomponents#httpcore;4.4.13 from central in [default]
+[2025-10-22T12:01:53.769+0000] {subprocess.py:93} INFO - 	org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+[2025-10-22T12:01:53.770+0000] {subprocess.py:93} INFO - 	software.amazon.ion#ion-java;1.0.2 from central in [default]
+[2025-10-22T12:01:53.770+0000] {subprocess.py:93} INFO - 	:: evicted modules:
+[2025-10-22T12:01:53.771+0000] {subprocess.py:93} INFO - 	commons-logging#commons-logging;1.2 by [commons-logging#commons-logging;1.1.3] in [default]
+[2025-10-22T12:01:53.771+0000] {subprocess.py:93} INFO - 	commons-codec#commons-codec;1.11 by [commons-codec#commons-codec;1.15] in [default]
+[2025-10-22T12:01:53.772+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-databind;2.12.6 by [com.fasterxml.jackson.core#jackson-databind;2.12.7.1] in [default]
+[2025-10-22T12:01:53.774+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-core;2.12.6 by [com.fasterxml.jackson.core#jackson-core;2.12.7] in [default]
+[2025-10-22T12:01:53.775+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:53.776+0000] {subprocess.py:93} INFO - 	|                  |            modules            ||   artifacts   |
+[2025-10-22T12:01:53.776+0000] {subprocess.py:93} INFO - 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2025-10-22T12:01:53.777+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:53.777+0000] {subprocess.py:93} INFO - 	|      default     |   21  |   0   |   0   |   4   ||   17  |   0   |
+[2025-10-22T12:01:53.778+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:53.779+0000] {subprocess.py:93} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-ffb06716-8741-478b-9b87-a89a39795400
+[2025-10-22T12:01:53.779+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T12:01:53.800+0000] {subprocess.py:93} INFO - 	0 artifacts copied, 17 already retrieved (0kB/19ms)
+[2025-10-22T12:01:54.154+0000] {subprocess.py:93} INFO - 25/10/22 12:01:54 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2025-10-22T12:01:54.453+0000] {subprocess.py:93} INFO - Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[2025-10-22T12:01:54.454+0000] {subprocess.py:93} INFO - Setting default log level to "WARN".
+[2025-10-22T12:01:54.455+0000] {subprocess.py:93} INFO - To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+[2025-10-22T12:01:56.098+0000] {subprocess.py:93} INFO - 25/10/22 12:01:56 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+[2025-10-22T12:02:16.159+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-22T12:02:16.159+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/java_gateway.py", line 1038, in send_command
+[2025-10-22T12:02:16.160+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/clientserver.py", line 540, in send_command
+[2025-10-22T12:02:16.160+0000] {subprocess.py:93} INFO - py4j.protocol.Py4JNetworkError: Answer from Java side is empty
+[2025-10-22T12:02:16.160+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.161+0000] {subprocess.py:93} INFO - During handling of the above exception, another exception occurred:
+[2025-10-22T12:02:16.161+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.161+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-22T12:02:16.162+0000] {subprocess.py:93} INFO -   File "<stdin>", line 19, in <module>
+[2025-10-22T12:02:16.162+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/sql/session.py", line 556, in getOrCreate
+[2025-10-22T12:02:16.162+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/core/context.py", line 523, in getOrCreate
+[2025-10-22T12:02:16.163+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/core/context.py", line 207, in __init__
+[2025-10-22T12:02:16.163+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/core/context.py", line 300, in _do_init
+[2025-10-22T12:02:16.163+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/core/context.py", line 429, in _initialize_context
+[2025-10-22T12:02:16.164+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/java_gateway.py", line 1626, in __call__
+[2025-10-22T12:02:16.164+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/java_gateway.py", line 1057, in send_command
+[2025-10-22T12:02:16.164+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/java_gateway.py", line 1036, in send_command
+[2025-10-22T12:02:16.165+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/clientserver.py", line 284, in _get_connection
+[2025-10-22T12:02:16.165+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/clientserver.py", line 291, in _create_new_connection
+[2025-10-22T12:02:16.165+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/py4j/clientserver.py", line 438, in connect_to_java_server
+[2025-10-22T12:02:16.165+0000] {subprocess.py:93} INFO - ConnectionRefusedError: [Errno 111] Connection refused
+[2025-10-22T12:02:16.174+0000] {subprocess.py:93} INFO - /usr/bin/bash: line 57:   636 Bus error               python3 - <<'PY'
+[2025-10-22T12:02:16.174+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.174+0000] {subprocess.py:93} INFO - import os
+[2025-10-22T12:02:16.175+0000] {subprocess.py:93} INFO - from pyspark.sql import SparkSession, functions as F
+[2025-10-22T12:02:16.175+0000] {subprocess.py:93} INFO - from pyspark.sql.types import StringType, FloatType
+[2025-10-22T12:02:16.175+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.176+0000] {subprocess.py:93} INFO - # set credentials and local ip inside runtime process
+[2025-10-22T12:02:16.176+0000] {subprocess.py:93} INFO - os.environ['AWS_ACCESS_KEY_ID'] = 'minioadmin'
+[2025-10-22T12:02:16.176+0000] {subprocess.py:93} INFO - os.environ['AWS_SECRET_ACCESS_KEY'] = 'minioadmin'
+[2025-10-22T12:02:16.177+0000] {subprocess.py:93} INFO - os.environ['SPARK_LOCAL_IP'] = '127.0.0.1'
+[2025-10-22T12:02:16.177+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.177+0000] {subprocess.py:93} INFO - # create spark session (packages used to access s3a and aws jars)
+[2025-10-22T12:02:16.177+0000] {subprocess.py:93} INFO - spark = SparkSession.builder \
+[2025-10-22T12:02:16.178+0000] {subprocess.py:93} INFO -     .appName("SilverLayerProcessing") \
+[2025-10-22T12:02:16.178+0000] {subprocess.py:93} INFO -     .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
+[2025-10-22T12:02:16.178+0000] {subprocess.py:93} INFO -     .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \
+[2025-10-22T12:02:16.179+0000] {subprocess.py:93} INFO -     .config("spark.hadoop.fs.s3a.secret.key", "minioadmin") \
+[2025-10-22T12:02:16.179+0000] {subprocess.py:93} INFO -     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+[2025-10-22T12:02:16.179+0000] {subprocess.py:93} INFO -     .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-s3:1.12.570") \
+[2025-10-22T12:02:16.180+0000] {subprocess.py:93} INFO -     .getOrCreate()
+[2025-10-22T12:02:16.180+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.180+0000] {subprocess.py:93} INFO - from minio import Minio
+[2025-10-22T12:02:16.181+0000] {subprocess.py:93} INFO - client = Minio("minio:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)
+[2025-10-22T12:02:16.181+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.181+0000] {subprocess.py:93} INFO - # ensure buckets exist (idempotent)
+[2025-10-22T12:02:16.182+0000] {subprocess.py:93} INFO - for b in ["bronze", "silver"]:
+[2025-10-22T12:02:16.182+0000] {subprocess.py:93} INFO -     try:
+[2025-10-22T12:02:16.182+0000] {subprocess.py:93} INFO -         if not client.bucket_exists(b):
+[2025-10-22T12:02:16.182+0000] {subprocess.py:93} INFO -             client.make_bucket(b)
+[2025-10-22T12:02:16.183+0000] {subprocess.py:93} INFO -     except Exception as e:
+[2025-10-22T12:02:16.183+0000] {subprocess.py:93} INFO -         # keep going; bucket checks often fail if MinIO not yet fully ready — error will surface when reading
+[2025-10-22T12:02:16.183+0000] {subprocess.py:93} INFO -         print("minio bucket check:", e)
+[2025-10-22T12:02:16.183+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.184+0000] {subprocess.py:93} INFO - # define s3a paths
+[2025-10-22T12:02:16.184+0000] {subprocess.py:93} INFO - BRONZE_PATH = "s3a://bronze"
+[2025-10-22T12:02:16.184+0000] {subprocess.py:93} INFO - SILVER_PATH = "s3a://silver"
+[2025-10-22T12:02:16.185+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.185+0000] {subprocess.py:93} INFO - try:
+[2025-10-22T12:02:16.185+0000] {subprocess.py:93} INFO -     df = spark.read.option("header", "true").csv(f"{BRONZE_PATH}/products/products.csv")
+[2025-10-22T12:02:16.186+0000] {subprocess.py:93} INFO -     print("Raw products rows:", df.count())
+[2025-10-22T12:02:16.186+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.186+0000] {subprocess.py:93} INFO -     df_cleaned = df.dropDuplicates(["id"])         .na.drop(subset=["id", "title"])         .withColumn("description", F.coalesce(F.col("description"), F.lit("No description")))         .withColumn("price", F.col("price").cast(FloatType()))         .filter(F.col("price").isNotNull())         .filter(F.col("price") > 0)         .withColumn("title", F.trim(F.col("title")))         .withColumn("category", F.initcap(F.trim(F.col("category"))))         .withColumn("brand", F.coalesce(F.col("brand"), F.lit("Unknown")))         .withColumn("price_category",
+[2025-10-22T12:02:16.186+0000] {subprocess.py:93} INFO -             F.when(F.col("price") < 50, "Budget")
+[2025-10-22T12:02:16.187+0000] {subprocess.py:93} INFO -              .when((F.col("price") >= 50) & (F.col("price") < 200), "Mid-range")
+[2025-10-22T12:02:16.187+0000] {subprocess.py:93} INFO -              .when((F.col("price") >= 200) & (F.col("price") < 1000), "Premium")
+[2025-10-22T12:02:16.187+0000] {subprocess.py:93} INFO -              .otherwise("Luxury"))
+[2025-10-22T12:02:16.188+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.188+0000] {subprocess.py:93} INFO -     df_cleaned.write.mode("overwrite").option("header", "true").csv(f"{SILVER_PATH}/products/products_cleaned_pyspark.csv")
+[2025-10-22T12:02:16.188+0000] {subprocess.py:93} INFO -     print("✅ Products cleaned and saved.")
+[2025-10-22T12:02:16.189+0000] {subprocess.py:93} INFO - except Exception as e:
+[2025-10-22T12:02:16.189+0000] {subprocess.py:93} INFO -     print("Error cleaning products:", e)
+[2025-10-22T12:02:16.189+0000] {subprocess.py:93} INFO -     raise
+[2025-10-22T12:02:16.190+0000] {subprocess.py:93} INFO - finally:
+[2025-10-22T12:02:16.190+0000] {subprocess.py:93} INFO -     spark.stop()
+[2025-10-22T12:02:16.190+0000] {subprocess.py:93} INFO - PY
+[2025-10-22T12:02:16.191+0000] {subprocess.py:93} INFO - 
+[2025-10-22T12:02:16.191+0000] {subprocess.py:97} INFO - Command exited with return code 135

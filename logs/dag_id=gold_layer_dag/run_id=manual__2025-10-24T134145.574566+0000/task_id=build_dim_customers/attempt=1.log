@@ -1,0 +1,24 @@
+[2025-10-24T13:41:50.520+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-24T13:41:50.565+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: gold_layer_dag.build_dim_customers manual__2025-10-24T13:41:45.574566+00:00 [queued]>
+[2025-10-24T13:41:50.577+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: gold_layer_dag.build_dim_customers manual__2025-10-24T13:41:45.574566+00:00 [queued]>
+[2025-10-24T13:41:50.578+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-24T13:41:50.596+0000] {taskinstance.py:2327} INFO - Executing <Task(PythonOperator): build_dim_customers> on 2025-10-24 13:41:45.574566+00:00
+[2025-10-24T13:41:50.611+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=312) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-24T13:41:50.614+0000] {standard_task_runner.py:63} INFO - Started process 320 to run task
+[2025-10-24T13:41:50.614+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'gold_layer_dag', 'build_dim_customers', 'manual__2025-10-24T13:41:45.574566+00:00', '--job-id', '385', '--raw', '--subdir', 'DAGS_FOLDER/gold_layer_dag.py', '--cfg-path', '/tmp/tmpa9l7herx']
+[2025-10-24T13:41:50.615+0000] {standard_task_runner.py:91} INFO - Job 385: Subtask build_dim_customers
+[2025-10-24T13:41:50.630+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-24T13:41:50.668+0000] {task_command.py:426} INFO - Running <TaskInstance: gold_layer_dag.build_dim_customers manual__2025-10-24T13:41:45.574566+00:00 [running]> on host 437b7e7e4559
+[2025-10-24T13:41:50.758+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='gold_layer' AIRFLOW_CTX_DAG_ID='gold_layer_dag' AIRFLOW_CTX_TASK_ID='build_dim_customers' AIRFLOW_CTX_EXECUTION_DATE='2025-10-24T13:41:45.574566+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-24T13:41:45.574566+00:00'
+[2025-10-24T13:41:50.761+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-24T13:41:52.643+0000] {logging_mixin.py:188} INFO - [build_dim_customers] wrote gold/20251024_134148/dim_customers.parquet
+[2025-10-24T13:41:52.674+0000] {python.py:237} INFO - Done. Returned value was: None
+[2025-10-24T13:41:52.675+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-24T13:41:52.683+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=gold_layer_dag, task_id=build_dim_customers, execution_date=20251024T134145, start_date=20251024T134150, end_date=20251024T134152
+[2025-10-24T13:41:52.793+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-24T13:41:52.812+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-24T13:41:52.839+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

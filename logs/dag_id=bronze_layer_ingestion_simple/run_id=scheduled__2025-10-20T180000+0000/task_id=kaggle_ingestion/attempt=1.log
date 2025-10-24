@@ -1,0 +1,131 @@
+[2025-10-21T19:03:01.275+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-21T19:03:01.298+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-21T19:03:01.304+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-21T19:03:01.305+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-21T19:03:01.319+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): kaggle_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-21T19:03:01.326+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=65) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-21T19:03:01.328+0000] {standard_task_runner.py:63} INFO - Started process 67 to run task
+[2025-10-21T19:03:01.328+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'kaggle_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp_4iovosv']
+[2025-10-21T19:03:01.331+0000] {standard_task_runner.py:91} INFO - Job 5: Subtask kaggle_ingestion
+[2025-10-21T19:03:01.345+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-21T19:03:01.383+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 47d8b2d9b60c
+[2025-10-21T19:03:01.460+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='kaggle_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-21T19:03:01.462+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-21T19:03:01.474+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-21T19:03:01.475+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n    cd /opt/***/dags/bronze\n    export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n    python3 kaggle_ingestion.py\n    ']
+[2025-10-21T19:03:01.486+0000] {subprocess.py:86} INFO - Output:
+[2025-10-21T19:03:02.809+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-21T19:03:02.809+0000] {subprocess.py:93} INFO -   File "/opt/***/dags/bronze/kaggle_ingestion.py", line 10, in <module>
+[2025-10-21T19:03:02.810+0000] {subprocess.py:93} INFO -     from minio import Minio
+[2025-10-21T19:03:02.811+0000] {subprocess.py:93} INFO - ModuleNotFoundError: No module named 'minio'
+[2025-10-21T19:03:02.873+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-10-21T19:03:02.874+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-21T19:03:02.885+0000] {taskinstance.py:2890} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/bash.py", line 243, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-10-21T19:03:02.889+0000] {taskinstance.py:1205} INFO - Marking task as UP_FOR_RETRY. dag_id=bronze_layer_ingestion_simple, task_id=kaggle_ingestion, execution_date=20251020T180000, start_date=20251021T190301, end_date=20251021T190302
+[2025-10-21T19:03:02.907+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 5 for task kaggle_ingestion (Bash command failed. The command returned a non-zero exit code 1.; 67)
+[2025-10-21T19:03:02.949+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-10-21T19:03:02.970+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-21T19:03:02.977+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-10-22T09:38:48.896+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T09:38:48.930+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:48.940+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:48.941+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T09:38:48.963+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): kaggle_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-22T09:38:48.974+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=184) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T09:38:48.977+0000] {standard_task_runner.py:63} INFO - Started process 191 to run task
+[2025-10-22T09:38:48.976+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'kaggle_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '112', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp11cr2xwp']
+[2025-10-22T09:38:48.981+0000] {standard_task_runner.py:91} INFO - Job 112: Subtask kaggle_ingestion
+[2025-10-22T09:38:49.010+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T09:38:49.092+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 0586f0d5111d
+[2025-10-22T09:38:49.223+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='kaggle_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T09:38:49.225+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T09:38:49.244+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T09:38:49.246+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Running Kaggle Ingestion ====="\n        cd /opt/***/dags/bronze\n        export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n        python3 kaggle_ingestion.py\n        ']
+[2025-10-22T09:38:49.269+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T09:38:49.272+0000] {subprocess.py:93} INFO - ===== Running Kaggle Ingestion =====
+[2025-10-22T09:38:51.979+0000] {subprocess.py:93} INFO - INFO:__main__:Starting Kaggle data ingestion process
+[2025-10-22T09:38:51.985+0000] {subprocess.py:93} INFO - INFO:__main__:Bucket bronze already exists
+[2025-10-22T09:38:51.985+0000] {subprocess.py:93} INFO - INFO:__main__:Downloading dataset: olistbr/brazilian-ecommerce
+[2025-10-22T09:38:43.805+0000] {subprocess.py:93} INFO - INFO:__main__:Dataset downloaded successfully
+[2025-10-22T09:38:43.985+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_customers_dataset.csv to kaggle_data/20251022_093843/olist_customers_dataset.csv
+[2025-10-22T09:38:44.179+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_reviews_dataset.csv to kaggle_data/20251022_093843/olist_order_reviews_dataset.csv
+[2025-10-22T09:38:44.389+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_items_dataset.csv to kaggle_data/20251022_093843/olist_order_items_dataset.csv
+[2025-10-22T09:38:44.543+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_payments_dataset.csv to kaggle_data/20251022_093843/olist_order_payments_dataset.csv
+[2025-10-22T09:38:44.570+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded product_category_name_translation.csv to kaggle_data/20251022_093843/product_category_name_translation.csv
+[2025-10-22T09:38:44.648+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_products_dataset.csv to kaggle_data/20251022_093843/olist_products_dataset.csv
+[2025-10-22T09:38:44.908+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_orders_dataset.csv to kaggle_data/20251022_093843/olist_orders_dataset.csv
+[2025-10-22T09:38:45.544+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_geolocation_dataset.csv to kaggle_data/20251022_093843/olist_geolocation_dataset.csv
+[2025-10-22T09:38:45.599+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_sellers_dataset.csv to kaggle_data/20251022_093843/olist_sellers_dataset.csv
+[2025-10-22T09:38:45.640+0000] {subprocess.py:93} INFO - INFO:__main__:Cleaned up temporary files
+[2025-10-22T09:38:45.641+0000] {subprocess.py:93} INFO - INFO:__main__:Kaggle data ingestion completed successfully
+[2025-10-22T09:38:45.641+0000] {subprocess.py:93} INFO - Dataset URL: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+[2025-10-22T09:38:45.756+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T09:38:45.758+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T09:38:45.784+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=kaggle_ingestion, execution_date=20251020T180000, start_date=20251022T093848, end_date=20251022T093845
+[2025-10-22T09:39:09.106+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T09:39:09.121+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T09:39:09.123+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-10-22T10:10:47.214+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:10:47.231+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:10:47.236+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:10:47.236+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T10:10:47.246+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): kaggle_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-22T10:10:47.253+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=111) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:10:47.255+0000] {standard_task_runner.py:63} INFO - Started process 113 to run task
+[2025-10-22T10:10:47.254+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'kaggle_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmpbqhqgaz3']
+[2025-10-22T10:10:47.256+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask kaggle_ingestion
+[2025-10-22T10:10:47.270+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:10:47.294+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.kaggle_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:10:47.360+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='kaggle_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T10:10:47.361+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:10:47.372+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:10:47.373+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Running Kaggle Ingestion ====="\n        cd /opt/***/dags/bronze\n        export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n        python3 kaggle_ingestion.py\n        ']
+[2025-10-22T10:10:47.382+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:10:47.384+0000] {subprocess.py:93} INFO - ===== Running Kaggle Ingestion =====
+[2025-10-22T10:10:49.038+0000] {subprocess.py:93} INFO - INFO:__main__:Starting Kaggle data ingestion process
+[2025-10-22T10:10:49.044+0000] {subprocess.py:93} INFO - INFO:__main__:Bucket bronze already exists
+[2025-10-22T10:10:49.045+0000] {subprocess.py:93} INFO - INFO:__main__:Downloading dataset: olistbr/brazilian-ecommerce
+[2025-10-22T10:11:10.723+0000] {subprocess.py:93} INFO - INFO:__main__:Dataset downloaded successfully
+[2025-10-22T10:11:10.927+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_customers_dataset.csv to kaggle_data/20251022_101110/olist_customers_dataset.csv
+[2025-10-22T10:11:11.134+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_reviews_dataset.csv to kaggle_data/20251022_101110/olist_order_reviews_dataset.csv
+[2025-10-22T10:11:11.350+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_items_dataset.csv to kaggle_data/20251022_101110/olist_order_items_dataset.csv
+[2025-10-22T10:11:11.505+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_order_payments_dataset.csv to kaggle_data/20251022_101110/olist_order_payments_dataset.csv
+[2025-10-22T10:11:11.534+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded product_category_name_translation.csv to kaggle_data/20251022_101110/product_category_name_translation.csv
+[2025-10-22T10:11:11.602+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_products_dataset.csv to kaggle_data/20251022_101110/olist_products_dataset.csv
+[2025-10-22T10:11:11.903+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_orders_dataset.csv to kaggle_data/20251022_101110/olist_orders_dataset.csv
+[2025-10-22T10:11:12.639+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_geolocation_dataset.csv to kaggle_data/20251022_101110/olist_geolocation_dataset.csv
+[2025-10-22T10:11:12.695+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded olist_sellers_dataset.csv to kaggle_data/20251022_101110/olist_sellers_dataset.csv
+[2025-10-22T10:11:12.736+0000] {subprocess.py:93} INFO - INFO:__main__:Cleaned up temporary files
+[2025-10-22T10:11:12.736+0000] {subprocess.py:93} INFO - INFO:__main__:Kaggle data ingestion completed successfully
+[2025-10-22T10:11:12.737+0000] {subprocess.py:93} INFO - Dataset URL: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+[2025-10-22T10:11:12.862+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T10:11:12.862+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:11:12.884+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=kaggle_ingestion, execution_date=20251020T180000, start_date=20251022T101047, end_date=20251022T101112
+[2025-10-22T10:11:12.934+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T10:11:12.955+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:11:12.958+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

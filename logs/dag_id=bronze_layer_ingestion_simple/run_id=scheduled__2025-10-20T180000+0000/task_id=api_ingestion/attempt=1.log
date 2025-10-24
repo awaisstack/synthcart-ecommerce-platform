@@ -1,0 +1,117 @@
+[2025-10-21T19:03:01.157+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-21T19:03:01.181+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-21T19:03:01.189+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-21T19:03:01.190+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-21T19:03:01.208+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): api_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-21T19:03:01.217+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=64) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-21T19:03:01.220+0000] {standard_task_runner.py:63} INFO - Started process 66 to run task
+[2025-10-21T19:03:01.220+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'api_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmpf98dcin8']
+[2025-10-21T19:03:01.224+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask api_ingestion
+[2025-10-21T19:03:01.240+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-21T19:03:01.280+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 47d8b2d9b60c
+[2025-10-21T19:03:01.367+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='api_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-21T19:03:01.368+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-21T19:03:01.381+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-21T19:03:01.382+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n    cd /opt/***/dags/bronze\n    export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n    python3 api_ingestion.py\n    ']
+[2025-10-21T19:03:01.395+0000] {subprocess.py:86} INFO - Output:
+[2025-10-21T19:03:01.816+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-21T19:03:01.816+0000] {subprocess.py:93} INFO -   File "/opt/***/dags/bronze/api_ingestion.py", line 9, in <module>
+[2025-10-21T19:03:01.817+0000] {subprocess.py:93} INFO -     from minio import Minio
+[2025-10-21T19:03:01.818+0000] {subprocess.py:93} INFO - ModuleNotFoundError: No module named 'minio'
+[2025-10-21T19:03:01.834+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-10-21T19:03:01.834+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-21T19:03:01.844+0000] {taskinstance.py:2890} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/bash.py", line 243, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-10-21T19:03:01.848+0000] {taskinstance.py:1205} INFO - Marking task as UP_FOR_RETRY. dag_id=bronze_layer_ingestion_simple, task_id=api_ingestion, execution_date=20251020T180000, start_date=20251021T190301, end_date=20251021T190301
+[2025-10-21T19:03:01.860+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 4 for task api_ingestion (Bash command failed. The command returned a non-zero exit code 1.; 66)
+[2025-10-21T19:03:01.876+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-10-21T19:03:01.899+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-21T19:03:01.901+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-10-22T09:38:48.411+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T09:38:48.446+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:48.458+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:48.459+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T09:38:48.488+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): api_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-22T09:38:48.508+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=182) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T09:38:48.513+0000] {standard_task_runner.py:63} INFO - Started process 187 to run task
+[2025-10-22T09:38:48.524+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'api_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '109', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmpwdj0sin1']
+[2025-10-22T09:38:48.531+0000] {standard_task_runner.py:91} INFO - Job 109: Subtask api_ingestion
+[2025-10-22T09:38:48.569+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T09:38:48.666+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 0586f0d5111d
+[2025-10-22T09:38:48.823+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='api_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T09:38:48.824+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T09:38:48.845+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T09:38:48.847+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Running API Ingestion ====="\n        cd /opt/***/dags/bronze\n        export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n        python3 api_ingestion.py\n        ']
+[2025-10-22T09:38:48.867+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T09:38:48.870+0000] {subprocess.py:93} INFO - ===== Running API Ingestion =====
+[2025-10-22T09:38:49.901+0000] {subprocess.py:93} INFO - INFO:__main__:Starting API data ingestion process
+[2025-10-22T09:38:50.443+0000] {subprocess.py:93} INFO - INFO:__main__:Bucket bronze already exists
+[2025-10-22T09:38:50.444+0000] {subprocess.py:93} INFO - INFO:__main__:Fetching data from products: https://dummyjson.com/products
+[2025-10-22T09:38:50.894+0000] {subprocess.py:93} INFO - INFO:__main__:Successfully fetched products data
+[2025-10-22T09:38:50.941+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded products data to api_data/20251022_093850/products.json
+[2025-10-22T09:38:50.942+0000] {subprocess.py:93} INFO - INFO:__main__:Fetching data from users: https://dummyjson.com/users
+[2025-10-22T09:38:51.498+0000] {subprocess.py:93} INFO - INFO:__main__:Successfully fetched users data
+[2025-10-22T09:38:51.532+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded users data to api_data/20251022_093851/users.json
+[2025-10-22T09:38:51.533+0000] {subprocess.py:93} INFO - INFO:__main__:API data ingestion completed successfully
+[2025-10-22T09:38:51.555+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T09:38:51.556+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T09:38:51.582+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=api_ingestion, execution_date=20251020T180000, start_date=20251022T093848, end_date=20251022T093851
+[2025-10-22T09:38:51.639+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T09:38:51.663+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T09:38:51.666+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-10-22T10:10:47.279+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:10:47.295+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:10:47.300+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:10:47.301+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T10:10:47.311+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): api_ingestion> on 2025-10-20 18:00:00+00:00
+[2025-10-22T10:10:47.318+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=112) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:10:47.320+0000] {standard_task_runner.py:63} INFO - Started process 114 to run task
+[2025-10-22T10:10:47.319+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'api_ingestion', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp33h_4jx9']
+[2025-10-22T10:10:47.321+0000] {standard_task_runner.py:91} INFO - Job 5: Subtask api_ingestion
+[2025-10-22T10:10:47.342+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:10:47.371+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.api_ingestion scheduled__2025-10-20T18:00:00+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:10:47.435+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='api_ingestion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T10:10:47.437+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:10:47.446+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:10:47.447+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Running API Ingestion ====="\n        cd /opt/***/dags/bronze\n        export PYTHONPATH=/opt/***/dags/bronze:$PYTHONPATH\n        python3 api_ingestion.py\n        ']
+[2025-10-22T10:10:47.457+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:10:47.459+0000] {subprocess.py:93} INFO - ===== Running API Ingestion =====
+[2025-10-22T10:10:47.952+0000] {subprocess.py:93} INFO - INFO:__main__:Starting API data ingestion process
+[2025-10-22T10:10:47.981+0000] {subprocess.py:93} INFO - INFO:__main__:Bucket bronze already exists
+[2025-10-22T10:10:47.981+0000] {subprocess.py:93} INFO - INFO:__main__:Fetching data from products: https://dummyjson.com/products
+[2025-10-22T10:10:48.533+0000] {subprocess.py:93} INFO - INFO:__main__:Successfully fetched products data
+[2025-10-22T10:10:48.606+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded products data to api_data/20251022_101048/products.json
+[2025-10-22T10:10:48.606+0000] {subprocess.py:93} INFO - INFO:__main__:Fetching data from users: https://dummyjson.com/users
+[2025-10-22T10:10:49.017+0000] {subprocess.py:93} INFO - INFO:__main__:Successfully fetched users data
+[2025-10-22T10:10:49.056+0000] {subprocess.py:93} INFO - INFO:__main__:Uploaded users data to api_data/20251022_101049/users.json
+[2025-10-22T10:10:49.059+0000] {subprocess.py:93} INFO - INFO:__main__:API data ingestion completed successfully
+[2025-10-22T10:10:49.080+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T10:10:49.081+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:10:49.101+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=api_ingestion, execution_date=20251020T180000, start_date=20251022T101047, end_date=20251022T101049
+[2025-10-22T10:10:49.136+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T10:10:49.161+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:10:49.163+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

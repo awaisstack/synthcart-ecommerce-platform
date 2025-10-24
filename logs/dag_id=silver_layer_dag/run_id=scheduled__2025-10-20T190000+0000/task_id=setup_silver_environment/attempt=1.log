@@ -1,0 +1,124 @@
+[2025-10-22T11:59:28.834+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T11:59:28.853+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: silver_layer_dag.setup_silver_environment scheduled__2025-10-20T19:00:00+00:00 [queued]>
+[2025-10-22T11:59:28.859+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: silver_layer_dag.setup_silver_environment scheduled__2025-10-20T19:00:00+00:00 [queued]>
+[2025-10-22T11:59:28.860+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-22T11:59:28.870+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_silver_environment> on 2025-10-20 19:00:00+00:00
+[2025-10-22T11:59:28.877+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=126) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T11:59:28.880+0000] {standard_task_runner.py:63} INFO - Started process 127 to run task
+[2025-10-22T11:59:28.879+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'silver_layer_dag', 'setup_silver_environment', 'scheduled__2025-10-20T19:00:00+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/silver_layer_dag.py', '--cfg-path', '/tmp/tmp7ocy4pug']
+[2025-10-22T11:59:28.882+0000] {standard_task_runner.py:91} INFO - Job 3: Subtask setup_silver_environment
+[2025-10-22T11:59:28.896+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T11:59:28.929+0000] {task_command.py:426} INFO - Running <TaskInstance: silver_layer_dag.setup_silver_environment scheduled__2025-10-20T19:00:00+00:00 [running]> on host 106a2f4786f4
+[2025-10-22T11:59:29.004+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='data_team' AIRFLOW_CTX_DAG_ID='silver_layer_dag' AIRFLOW_CTX_TASK_ID='setup_silver_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T19:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T19:00:00+00:00'
+[2025-10-22T11:59:29.005+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T11:59:29.029+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T11:59:29.031+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\necho "== Silver env check =="\npython3 - <<\'PY\'\n\nimport os\nfrom pyspark.sql import SparkSession, functions as F\nfrom pyspark.sql.types import StringType, FloatType\n\n# set credentials and local ip inside runtime process\nos.environ[\'AWS_ACCESS_KEY_ID\'] = \'minioadmin\'\nos.environ[\'AWS_SECRET_ACCESS_KEY\'] = \'minioadmin\'\nos.environ[\'SPARK_LOCAL_IP\'] = \'127.0.0.1\'\n\n# create spark session (packages used to access s3a and aws jars)\nspark = SparkSession.builder \\\n    .appName("SilverLayerProcessing") \\\n    .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \\\n    .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.secret.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \\\n    .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-s3:1.12.570") \\\n    .getOrCreate()\n\nfrom minio import Minio\nclient = Minio("minio:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)\n\n# ensure buckets exist (idempotent)\nfor b in ["bronze", "silver"]:\n    try:\n        if not client.bucket_exists(b):\n            client.make_bucket(b)\n    except Exception as e:\n        # keep going; bucket checks often fail if MinIO not yet fully ready — error will surface when reading\n        print("minio bucket check:", e)\n\n# define s3a paths\nBRONZE_PATH = "s3a://bronze"\nSILVER_PATH = "s3a://silver"\n\nprint("Spark session created successfully (runtime).")\nspark.stop()\nPY']
+[2025-10-22T11:59:29.042+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T11:59:29.048+0000] {subprocess.py:93} INFO - == Silver env check ==
+[2025-10-22T11:59:30.193+0000] {subprocess.py:93} INFO - WARNING: Using incubator modules: jdk.incubator.vector
+[2025-10-22T11:59:31.615+0000] {subprocess.py:93} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.12/site-packages/pyspark/jars/ivy-2.5.3.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2025-10-22T11:59:31.690+0000] {subprocess.py:93} INFO - Ivy Default Cache set to: /home/***/.ivy2.5.2/cache
+[2025-10-22T11:59:31.691+0000] {subprocess.py:93} INFO - The jars for the packages stored in: /home/***/.ivy2.5.2/jars
+[2025-10-22T11:59:31.693+0000] {subprocess.py:93} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2025-10-22T11:59:31.694+0000] {subprocess.py:93} INFO - com.amazonaws#aws-java-sdk-s3 added as a dependency
+[2025-10-22T11:59:31.695+0000] {subprocess.py:93} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-f58ccdfb-fd53-4c20-8baf-02846bab5b2c;1.0
+[2025-10-22T11:59:31.695+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T11:59:35.080+0000] {subprocess.py:93} INFO - 	found org.apache.hadoop#hadoop-aws;3.3.4 in central
+[2025-10-22T11:59:36.494+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2025-10-22T11:59:39.702+0000] {subprocess.py:93} INFO - 	found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+[2025-10-22T11:59:41.636+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-s3;1.12.570 in central
+[2025-10-22T11:59:42.010+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-kms;1.12.570 in central
+[2025-10-22T11:59:43.197+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-core;1.12.570 in central
+[2025-10-22T11:59:48.863+0000] {subprocess.py:93} INFO - 	found commons-logging#commons-logging;1.1.3 in central
+[2025-10-22T11:59:51.841+0000] {subprocess.py:93} INFO - 	found commons-codec#commons-codec;1.15 in central
+[2025-10-22T11:59:55.731+0000] {subprocess.py:93} INFO - 	found org.apache.httpcomponents#httpclient;4.5.13 in central
+[2025-10-22T11:59:56.972+0000] {subprocess.py:93} INFO - 	found org.apache.httpcomponents#httpcore;4.4.13 in central
+[2025-10-22T11:59:57.086+0000] {subprocess.py:93} INFO - 	found software.amazon.ion#ion-java;1.0.2 in central
+[2025-10-22T12:00:01.232+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-databind;2.12.7.1 in central
+[2025-10-22T12:00:01.392+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-annotations;2.12.7 in central
+[2025-10-22T12:00:01.550+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.core#jackson-core;2.12.7 in central
+[2025-10-22T12:00:05.705+0000] {subprocess.py:93} INFO - 	found com.fasterxml.jackson.dataformat#jackson-dataformat-cbor;2.12.6 in central
+[2025-10-22T12:00:05.841+0000] {subprocess.py:93} INFO - 	found joda-time#joda-time;2.8.1 in central
+[2025-10-22T12:00:06.103+0000] {subprocess.py:93} INFO - 	found com.amazonaws#jmespath-java;1.12.570 in central
+[2025-10-22T12:00:06.233+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar ...
+[2025-10-22T12:00:07.725+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] org.apache.hadoop#hadoop-aws;3.3.4!hadoop-aws.jar (1617ms)
+[2025-10-22T12:00:08.133+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.12.570/aws-java-sdk-s3-1.12.570.jar ...
+[2025-10-22T12:00:08.816+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.amazonaws#aws-java-sdk-s3;1.12.570!aws-java-sdk-s3.jar (1090ms)
+[2025-10-22T12:00:08.860+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar ...
+[2025-10-22T12:01:28.439+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.amazonaws#aws-java-sdk-bundle;1.12.262!aws-java-sdk-bundle.jar (79623ms)
+[2025-10-22T12:01:28.496+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar ...
+[2025-10-22T12:01:28.677+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] org.wildfly.openssl#wildfly-openssl;1.0.7.Final!wildfly-openssl.jar (237ms)
+[2025-10-22T12:01:29.080+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-kms/1.12.570/aws-java-sdk-kms-1.12.570.jar ...
+[2025-10-22T12:01:29.280+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.amazonaws#aws-java-sdk-kms;1.12.570!aws-java-sdk-kms.jar (602ms)
+[2025-10-22T12:01:29.596+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.12.570/aws-java-sdk-core-1.12.570.jar ...
+[2025-10-22T12:01:29.888+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.amazonaws#aws-java-sdk-core;1.12.570!aws-java-sdk-core.jar (608ms)
+[2025-10-22T12:01:30.044+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/jmespath-java/1.12.570/jmespath-java-1.12.570.jar ...
+[2025-10-22T12:01:30.102+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.amazonaws#jmespath-java;1.12.570!jmespath-java.jar (213ms)
+[2025-10-22T12:01:30.170+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar ...
+[2025-10-22T12:01:30.235+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] commons-logging#commons-logging;1.1.3!commons-logging.jar (133ms)
+[2025-10-22T12:01:30.292+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/commons-codec/commons-codec/1.15/commons-codec-1.15.jar ...
+[2025-10-22T12:01:30.395+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] commons-codec#commons-codec;1.15!commons-codec.jar (159ms)
+[2025-10-22T12:01:30.446+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13.jar ...
+[2025-10-22T12:01:30.571+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] org.apache.httpcomponents#httpclient;4.5.13!httpclient.jar (175ms)
+[2025-10-22T12:01:30.623+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar ...
+[2025-10-22T12:01:31.509+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] software.amazon.ion#ion-java;1.0.2!ion-java.jar(bundle) (938ms)
+[2025-10-22T12:01:31.574+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.12.7.1/jackson-databind-2.12.7.1.jar ...
+[2025-10-22T12:01:33.711+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.fasterxml.jackson.core#jackson-databind;2.12.7.1!jackson-databind.jar(bundle) (2200ms)
+[2025-10-22T12:01:33.992+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.12.6/jackson-dataformat-cbor-2.12.6.jar ...
+[2025-10-22T12:01:34.118+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.fasterxml.jackson.dataformat#jackson-dataformat-cbor;2.12.6!jackson-dataformat-cbor.jar(bundle) (407ms)
+[2025-10-22T12:01:34.170+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar ...
+[2025-10-22T12:01:34.748+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] joda-time#joda-time;2.8.1!joda-time.jar (630ms)
+[2025-10-22T12:01:34.816+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar ...
+[2025-10-22T12:01:35.196+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] org.apache.httpcomponents#httpcore;4.4.13!httpcore.jar (447ms)
+[2025-10-22T12:01:35.243+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.12.7/jackson-annotations-2.12.7.jar ...
+[2025-10-22T12:01:35.364+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.fasterxml.jackson.core#jackson-annotations;2.12.7!jackson-annotations.jar(bundle) (167ms)
+[2025-10-22T12:01:35.416+0000] {subprocess.py:93} INFO - downloading https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.12.7/jackson-core-2.12.7.jar ...
+[2025-10-22T12:01:35.811+0000] {subprocess.py:93} INFO - 	[SUCCESSFUL ] com.fasterxml.jackson.core#jackson-core;2.12.7!jackson-core.jar(bundle) (446ms)
+[2025-10-22T12:01:35.811+0000] {subprocess.py:93} INFO - :: resolution report :: resolve 34414ms :: artifacts dl 89703ms
+[2025-10-22T12:01:35.812+0000] {subprocess.py:93} INFO - 	:: modules in use:
+[2025-10-22T12:01:35.812+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2025-10-22T12:01:35.812+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-core;1.12.570 from central in [default]
+[2025-10-22T12:01:35.813+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-kms;1.12.570 from central in [default]
+[2025-10-22T12:01:35.813+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-s3;1.12.570 from central in [default]
+[2025-10-22T12:01:35.813+0000] {subprocess.py:93} INFO - 	com.amazonaws#jmespath-java;1.12.570 from central in [default]
+[2025-10-22T12:01:35.813+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-annotations;2.12.7 from central in [default]
+[2025-10-22T12:01:35.814+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-core;2.12.7 from central in [default]
+[2025-10-22T12:01:35.814+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-databind;2.12.7.1 from central in [default]
+[2025-10-22T12:01:35.814+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.dataformat#jackson-dataformat-cbor;2.12.6 from central in [default]
+[2025-10-22T12:01:35.815+0000] {subprocess.py:93} INFO - 	commons-codec#commons-codec;1.15 from central in [default]
+[2025-10-22T12:01:35.815+0000] {subprocess.py:93} INFO - 	commons-logging#commons-logging;1.1.3 from central in [default]
+[2025-10-22T12:01:35.815+0000] {subprocess.py:93} INFO - 	joda-time#joda-time;2.8.1 from central in [default]
+[2025-10-22T12:01:35.815+0000] {subprocess.py:93} INFO - 	org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+[2025-10-22T12:01:35.816+0000] {subprocess.py:93} INFO - 	org.apache.httpcomponents#httpclient;4.5.13 from central in [default]
+[2025-10-22T12:01:35.816+0000] {subprocess.py:93} INFO - 	org.apache.httpcomponents#httpcore;4.4.13 from central in [default]
+[2025-10-22T12:01:35.816+0000] {subprocess.py:93} INFO - 	org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+[2025-10-22T12:01:35.816+0000] {subprocess.py:93} INFO - 	software.amazon.ion#ion-java;1.0.2 from central in [default]
+[2025-10-22T12:01:35.817+0000] {subprocess.py:93} INFO - 	:: evicted modules:
+[2025-10-22T12:01:35.817+0000] {subprocess.py:93} INFO - 	commons-logging#commons-logging;1.2 by [commons-logging#commons-logging;1.1.3] in [default]
+[2025-10-22T12:01:35.817+0000] {subprocess.py:93} INFO - 	commons-codec#commons-codec;1.11 by [commons-codec#commons-codec;1.15] in [default]
+[2025-10-22T12:01:35.818+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-databind;2.12.6 by [com.fasterxml.jackson.core#jackson-databind;2.12.7.1] in [default]
+[2025-10-22T12:01:35.818+0000] {subprocess.py:93} INFO - 	com.fasterxml.jackson.core#jackson-core;2.12.6 by [com.fasterxml.jackson.core#jackson-core;2.12.7] in [default]
+[2025-10-22T12:01:35.818+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:35.818+0000] {subprocess.py:93} INFO - 	|                  |            modules            ||   artifacts   |
+[2025-10-22T12:01:35.819+0000] {subprocess.py:93} INFO - 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2025-10-22T12:01:35.819+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:35.819+0000] {subprocess.py:93} INFO - 	|      default     |   21  |   17  |   17  |   4   ||   17  |   17  |
+[2025-10-22T12:01:35.820+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T12:01:35.820+0000] {subprocess.py:93} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-f58ccdfb-fd53-4c20-8baf-02846bab5b2c
+[2025-10-22T12:01:35.820+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T12:01:36.293+0000] {subprocess.py:93} INFO - 	17 artifacts copied, 0 already retrieved (283036kB/476ms)
+[2025-10-22T12:01:36.786+0000] {subprocess.py:93} INFO - 25/10/22 12:01:36 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2025-10-22T12:01:37.008+0000] {subprocess.py:93} INFO - Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[2025-10-22T12:01:37.009+0000] {subprocess.py:93} INFO - Setting default log level to "WARN".
+[2025-10-22T12:01:37.009+0000] {subprocess.py:93} INFO - To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+[2025-10-22T12:01:47.818+0000] {subprocess.py:93} INFO - Spark session created successfully (runtime).
+[2025-10-22T12:01:48.315+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T12:01:48.316+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T12:01:48.403+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=silver_layer_dag, task_id=setup_silver_environment, execution_date=20251020T190000, start_date=20251022T115928, end_date=20251022T120148
+[2025-10-22T12:01:58.943+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T12:01:58.970+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T12:01:58.974+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

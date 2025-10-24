@@ -1,0 +1,24 @@
+[2025-10-24T13:19:20.578+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-24T13:19:20.597+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: gold_layer_dag.build_sales_summary manual__2025-10-24T13:19:17.412322+00:00 [queued]>
+[2025-10-24T13:19:20.603+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: gold_layer_dag.build_sales_summary manual__2025-10-24T13:19:17.412322+00:00 [queued]>
+[2025-10-24T13:19:20.604+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-24T13:19:20.615+0000] {taskinstance.py:2327} INFO - Executing <Task(PythonOperator): build_sales_summary> on 2025-10-24 13:19:17.412322+00:00
+[2025-10-24T13:19:20.624+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=195) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-24T13:19:20.625+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'gold_layer_dag', 'build_sales_summary', 'manual__2025-10-24T13:19:17.412322+00:00', '--job-id', '379', '--raw', '--subdir', 'DAGS_FOLDER/gold_layer_dag.py', '--cfg-path', '/tmp/tmpl8qie46t']
+[2025-10-24T13:19:20.625+0000] {standard_task_runner.py:63} INFO - Started process 201 to run task
+[2025-10-24T13:19:20.626+0000] {standard_task_runner.py:91} INFO - Job 379: Subtask build_sales_summary
+[2025-10-24T13:19:20.639+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-24T13:19:20.669+0000] {task_command.py:426} INFO - Running <TaskInstance: gold_layer_dag.build_sales_summary manual__2025-10-24T13:19:17.412322+00:00 [running]> on host 437b7e7e4559
+[2025-10-24T13:19:20.751+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='gold_layer' AIRFLOW_CTX_DAG_ID='gold_layer_dag' AIRFLOW_CTX_TASK_ID='build_sales_summary' AIRFLOW_CTX_EXECUTION_DATE='2025-10-24T13:19:17.412322+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-24T13:19:17.412322+00:00'
+[2025-10-24T13:19:20.753+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-24T13:19:22.246+0000] {logging_mixin.py:188} INFO - [build_sales_summary] wrote gold/20251024_131919/sales_summary.parquet
+[2025-10-24T13:19:22.277+0000] {python.py:237} INFO - Done. Returned value was: None
+[2025-10-24T13:19:22.278+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-24T13:19:22.286+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=gold_layer_dag, task_id=build_sales_summary, execution_date=20251024T131917, start_date=20251024T131920, end_date=20251024T131922
+[2025-10-24T13:19:22.362+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-24T13:19:22.383+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-24T13:19:22.390+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

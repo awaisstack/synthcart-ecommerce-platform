@@ -1,0 +1,45 @@
+[2025-10-22T10:53:29.585+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:53:29.603+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: silver_layer_transformation.setup_silver_environment scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:53:29.608+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: silver_layer_transformation.setup_silver_environment scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:53:29.608+0000] {taskinstance.py:2303} INFO - Starting attempt 3 of 3
+[2025-10-22T10:53:29.619+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_silver_environment> on 2025-10-20 18:00:00+00:00
+[2025-10-22T10:53:29.626+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=1103) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:53:29.628+0000] {standard_task_runner.py:63} INFO - Started process 1104 to run task
+[2025-10-22T10:53:29.627+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'silver_layer_transformation', 'setup_silver_environment', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '46', '--raw', '--subdir', 'DAGS_FOLDER/silver_layer_dag.py', '--cfg-path', '/tmp/tmpwaeivbb8']
+[2025-10-22T10:53:29.629+0000] {standard_task_runner.py:91} INFO - Job 46: Subtask setup_silver_environment
+[2025-10-22T10:53:29.646+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:53:29.675+0000] {task_command.py:426} INFO - Running <TaskInstance: silver_layer_transformation.setup_silver_environment scheduled__2025-10-20T18:00:00+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:53:29.737+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='ghazal_e_ashar' AIRFLOW_CTX_DAG_ID='silver_layer_transformation' AIRFLOW_CTX_TASK_ID='setup_silver_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='3' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T10:53:29.737+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:53:29.748+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:53:29.749+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\necho "Setting up Silver environment..."\npython3 - <<\'PY\'\n{get_pyspark_minio_config()}\nprint("PySpark + MinIO environment verified successfully.")\nspark.stop()\nPY']
+[2025-10-22T10:53:29.759+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:53:29.761+0000] {subprocess.py:93} INFO - Setting up Silver environment...
+[2025-10-22T10:53:29.785+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-22T10:53:29.786+0000] {subprocess.py:93} INFO -   File "<stdin>", line 1, in <module>
+[2025-10-22T10:53:29.786+0000] {subprocess.py:93} INFO - NameError: name 'get_pyspark_minio_config' is not defined
+[2025-10-22T10:53:29.788+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-10-22T10:53:29.788+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:53:29.799+0000] {taskinstance.py:2890} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/bash.py", line 243, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-10-22T10:53:29.802+0000] {taskinstance.py:1205} INFO - Marking task as FAILED. dag_id=silver_layer_transformation, task_id=setup_silver_environment, execution_date=20251020T180000, start_date=20251022T105329, end_date=20251022T105329
+[2025-10-22T10:53:29.812+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 46 for task setup_silver_environment (Bash command failed. The command returned a non-zero exit code 1.; 1104)
+[2025-10-22T10:53:29.842+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-10-22T10:53:29.860+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:53:29.865+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

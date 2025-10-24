@@ -1,0 +1,57 @@
+[2025-10-24T12:13:34.539+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-24T12:13:34.555+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: silver_layer_dag.run_cleaning manual__2025-10-24T12:13:30.775282+00:00 [queued]>
+[2025-10-24T12:13:34.560+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: silver_layer_dag.run_cleaning manual__2025-10-24T12:13:30.775282+00:00 [queued]>
+[2025-10-24T12:13:34.564+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-24T12:13:34.602+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): run_cleaning> on 2025-10-24 12:13:30.775282+00:00
+[2025-10-24T12:13:34.609+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=178) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-24T12:13:34.610+0000] {standard_task_runner.py:63} INFO - Started process 179 to run task
+[2025-10-24T12:13:34.610+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'silver_layer_dag', 'run_cleaning', 'manual__2025-10-24T12:13:30.775282+00:00', '--job-id', '349', '--raw', '--subdir', 'DAGS_FOLDER/silver_layer_dag.py', '--cfg-path', '/tmp/tmp389m7yuv']
+[2025-10-24T12:13:34.611+0000] {standard_task_runner.py:91} INFO - Job 349: Subtask run_cleaning
+[2025-10-24T12:13:34.649+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-24T12:13:34.674+0000] {task_command.py:426} INFO - Running <TaskInstance: silver_layer_dag.run_cleaning manual__2025-10-24T12:13:30.775282+00:00 [running]> on host 437b7e7e4559
+[2025-10-24T12:13:34.792+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='farheen_muzaffar' AIRFLOW_CTX_DAG_ID='silver_layer_dag' AIRFLOW_CTX_TASK_ID='run_cleaning' AIRFLOW_CTX_EXECUTION_DATE='2025-10-24T12:13:30.775282+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-24T12:13:30.775282+00:00'
+[2025-10-24T12:13:34.793+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-24T12:13:34.803+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-24T12:13:34.803+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Running Silver Cleaning Script ====="\n        cd /opt/***/dags/silver\n        export PYTHONPATH=/opt/***/dags/silver:$PYTHONPATH\n        python3 silver_cleaning.py\n        ']
+[2025-10-24T12:13:34.814+0000] {subprocess.py:86} INFO - Output:
+[2025-10-24T12:13:34.815+0000] {subprocess.py:93} INFO - ===== Running Silver Cleaning Script =====
+[2025-10-24T12:13:37.765+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:37.766+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:37.784+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:37.784+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:37.799+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:37.799+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:37.815+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:37.815+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:37.830+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:37.831+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:39.164+0000] {subprocess.py:93} INFO - /opt/***/dags/silver/silver_cleaning.py:154: UserWarning: The argument 'infer_datetime_format' is deprecated and will be removed in a future version. A strict version of it is now the default, see https://pandas.pydata.org/pdeps/0004-consistent-to-datetime-parsing.html. You can safely remove this argument.
+[2025-10-24T12:13:39.166+0000] {subprocess.py:93} INFO -   return pd.to_datetime(s, errors="coerce", infer_datetime_format=True)
+[2025-10-24T12:13:40.157+0000] {subprocess.py:93} INFO - Detected prefixes: kaggle_data/20251024_112739/ api_data/20251024_112722/ using timestamp: 20251024_112739
+[2025-10-24T12:13:40.157+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_customers_dataset.csv
+[2025-10-24T12:13:40.158+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_customers_cleaned.parquet
+[2025-10-24T12:13:40.158+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_products_dataset.csv
+[2025-10-24T12:13:40.158+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_products_cleaned.parquet
+[2025-10-24T12:13:40.159+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_sellers_dataset.csv
+[2025-10-24T12:13:40.159+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_sellers_cleaned.parquet
+[2025-10-24T12:13:40.159+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_orders_dataset.csv
+[2025-10-24T12:13:40.160+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_orders_cleaned.parquet
+[2025-10-24T12:13:40.160+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_order_items_dataset.csv
+[2025-10-24T12:13:40.160+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_order_items_cleaned.parquet
+[2025-10-24T12:13:40.161+0000] {subprocess.py:93} INFO - Downloading kaggle_data/20251024_112739/olist_order_payments_dataset.csv
+[2025-10-24T12:13:40.161+0000] {subprocess.py:93} INFO - Uploading cleaned parquet to kaggle/20251024_112739/olist_order_payments_cleaned.parquet
+[2025-10-24T12:13:40.161+0000] {subprocess.py:93} INFO - Downloading api_data/20251024_112722/products.json
+[2025-10-24T12:13:40.161+0000] {subprocess.py:93} INFO - Uploaded api products parquet: api/20251024_112739/api_products_cleaned.parquet
+[2025-10-24T12:13:40.162+0000] {subprocess.py:93} INFO - Downloading api_data/20251024_112722/users.json
+[2025-10-24T12:13:40.162+0000] {subprocess.py:93} INFO - Info: API users missing or failed: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+[2025-10-24T12:13:40.162+0000] {subprocess.py:93} INFO - Silver cleaning complete.
+[2025-10-24T12:13:40.242+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-24T12:13:40.243+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-24T12:13:40.267+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=silver_layer_dag, task_id=run_cleaning, execution_date=20251024T121330, start_date=20251024T121334, end_date=20251024T121340
+[2025-10-24T12:13:40.316+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-24T12:13:40.337+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-24T12:13:40.339+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

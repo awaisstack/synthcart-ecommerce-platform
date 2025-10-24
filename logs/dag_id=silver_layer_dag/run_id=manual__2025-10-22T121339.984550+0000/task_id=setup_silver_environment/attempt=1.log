@@ -1,0 +1,57 @@
+[2025-10-22T13:35:19.704+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T13:35:19.719+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: silver_layer_dag.setup_silver_environment manual__2025-10-22T12:13:39.984550+00:00 [queued]>
+[2025-10-22T13:35:19.723+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: silver_layer_dag.setup_silver_environment manual__2025-10-22T12:13:39.984550+00:00 [queued]>
+[2025-10-22T13:35:19.724+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-10-22T13:35:19.733+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_silver_environment> on 2025-10-22 12:13:39.984550+00:00
+[2025-10-22T13:35:19.739+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=426) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T13:35:19.740+0000] {standard_task_runner.py:63} INFO - Started process 427 to run task
+[2025-10-22T13:35:19.740+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'silver_layer_dag', 'setup_silver_environment', 'manual__2025-10-22T12:13:39.984550+00:00', '--job-id', '132', '--raw', '--subdir', 'DAGS_FOLDER/silver_layer_dag.py', '--cfg-path', '/tmp/tmpmkrrnkls']
+[2025-10-22T13:35:19.742+0000] {standard_task_runner.py:91} INFO - Job 132: Subtask setup_silver_environment
+[2025-10-22T13:35:19.756+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T13:35:19.780+0000] {task_command.py:426} INFO - Running <TaskInstance: silver_layer_dag.setup_silver_environment manual__2025-10-22T12:13:39.984550+00:00 [running]> on host 98e3baa252b2
+[2025-10-22T13:35:19.840+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='data_team' AIRFLOW_CTX_DAG_ID='silver_layer_dag' AIRFLOW_CTX_TASK_ID='setup_silver_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-22T12:13:39.984550+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-22T12:13:39.984550+00:00'
+[2025-10-22T13:35:19.842+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T13:35:19.852+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T13:35:19.853+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\necho "== Silver env check =="\npython3 - <<\'PY\'\n\nimport os, re, io, json\nfrom datetime import datetime\nfrom pyspark.sql import SparkSession, functions as F\nfrom pyspark.sql.types import StringType, FloatType\nfrom minio import Minio\n\n# runtime environment variables for MinIO + Spark\nos.environ[\'AWS_ACCESS_KEY_ID\'] = \'minioadmin\'\nos.environ[\'AWS_SECRET_ACCESS_KEY\'] = \'minioadmin\'\nos.environ[\'SPARK_LOCAL_IP\'] = \'127.0.0.1\'\n\n# create spark session (these jars allow s3a access at runtime)\nspark = SparkSession.builder \\\n    .appName("SilverLayerProcessing") \\\n    .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \\\n    .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.secret.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \\\n    .config("spark.hadoop.fs.s3a.path.style.access", "true") \\\n    .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262") \\\n    .getOrCreate()\n\nclient = Minio("minio:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)\n\nBRONZE_BUCKET = "bronze"\nBRONZE_ROOT = "bronze"  # for printing/log only\nBRONZE_PREFIXES = ["kaggle_data", "api_data"]\nSILVER_PATH = "s3a://silver"\n\n# Helper: find first-level timestamped subfolders under a root prefix (e.g. "kaggle_data")\ndef list_first_level_subfolders(prefix_root):\n    # collect all objects under prefix_root and extract first-level folder names\n    found = set()\n    try:\n        for obj in client.list_objects(BRONZE_BUCKET, prefix=f"{prefix_root}/", recursive=True):\n            parts = obj.object_name.split("/")\n            # expecting paths like "kaggle_data/20251022_121218/filename"\n            if len(parts) >= 2:\n                found.add(parts[1])\n    except Exception as e:\n        print(f"Error listing objects for {prefix_root}: {e}")\n    return sorted([f for f in found if re.match(r"^[0-9]{8}_[0-9]{6}$", f)])\n\n# Helper: choose latest timestamped folder (returns None if none)\ndef get_latest_timestamp_for_prefix(prefix_root):\n    subs = list_first_level_subfolders(prefix_root)\n    return subs[-1] if subs else None\n\n# Helper: check for presence of file in a given prefix/timestamp folder\ndef object_exists_in_folder(prefix_root, ts_folder, candidate_names):\n    if not ts_folder:\n        return None\n    folder_prefix = f"{prefix_root}/{ts_folder}/"\n    # iterate objects under this folder and try to match a candidate\n    try:\n        for obj in client.list_objects(BRONZE_BUCKET, prefix=folder_prefix, recursive=True):\n            name = obj.object_name.split("/")[-1].lower()\n            for cand in candidate_names:\n                if cand.lower() in name:\n                    return obj.object_name  # full key like "kaggle_data/20251022_121218/olist_customers_dataset.csv"\n    except Exception as e:\n        print(f"Error checking objects in {folder_prefix}: {e}")\n    return None\n\n# Helper: read file with spark by S3A path; returns DataFrame or raises\ndef spark_read_by_key(bucket, key):\n    path = f"s3a://{bucket}/{key}"\n    if key.lower().endswith(".csv"):\n        return spark.read.option("header", "true").option("inferSchema", "true").csv(path)\n    elif key.lower().endswith(".json"):\n        return spark.read.option("multiLine", "true").json(path)\n    else:\n        # fallback attempt csv\n        return spark.read.option("header", "true").option("inferSchema", "true").csv(path)\n\n# Helper: safely get column or return None\ndef safe_col(df, col_name):\n    return F.col(col_name) if col_name in df.columns else None\n\nprint("✅ Runtime libraries available and MinIO client configured (will still verify files at task runtime).")\nspark.stop()\nPY']
+[2025-10-22T13:35:19.863+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T13:35:19.865+0000] {subprocess.py:93} INFO - == Silver env check ==
+[2025-10-22T13:35:20.630+0000] {subprocess.py:93} INFO - WARNING: Using incubator modules: jdk.incubator.vector
+[2025-10-22T13:35:21.345+0000] {subprocess.py:93} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.12/site-packages/pyspark/jars/ivy-2.5.3.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2025-10-22T13:35:21.391+0000] {subprocess.py:93} INFO - Ivy Default Cache set to: /home/***/.ivy2.5.2/cache
+[2025-10-22T13:35:21.391+0000] {subprocess.py:93} INFO - The jars for the packages stored in: /home/***/.ivy2.5.2/jars
+[2025-10-22T13:35:21.394+0000] {subprocess.py:93} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2025-10-22T13:35:21.394+0000] {subprocess.py:93} INFO - com.amazonaws#aws-java-sdk-bundle added as a dependency
+[2025-10-22T13:35:21.394+0000] {subprocess.py:93} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-9893b0f9-18d1-46e2-b517-cc6d613f831d;1.0
+[2025-10-22T13:35:21.394+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T13:35:21.501+0000] {subprocess.py:93} INFO - 	found org.apache.hadoop#hadoop-aws;3.3.4 in central
+[2025-10-22T13:35:21.517+0000] {subprocess.py:93} INFO - 	found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2025-10-22T13:35:21.533+0000] {subprocess.py:93} INFO - 	found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+[2025-10-22T13:35:21.547+0000] {subprocess.py:93} INFO - :: resolution report :: resolve 147ms :: artifacts dl 6ms
+[2025-10-22T13:35:21.547+0000] {subprocess.py:93} INFO - 	:: modules in use:
+[2025-10-22T13:35:21.548+0000] {subprocess.py:93} INFO - 	com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2025-10-22T13:35:21.548+0000] {subprocess.py:93} INFO - 	org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+[2025-10-22T13:35:21.548+0000] {subprocess.py:93} INFO - 	org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+[2025-10-22T13:35:21.549+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T13:35:21.549+0000] {subprocess.py:93} INFO - 	|                  |            modules            ||   artifacts   |
+[2025-10-22T13:35:21.549+0000] {subprocess.py:93} INFO - 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2025-10-22T13:35:21.550+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T13:35:21.550+0000] {subprocess.py:93} INFO - 	|      default     |   3   |   0   |   0   |   0   ||   3   |   0   |
+[2025-10-22T13:35:21.550+0000] {subprocess.py:93} INFO - 	---------------------------------------------------------------------
+[2025-10-22T13:35:21.551+0000] {subprocess.py:93} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-9893b0f9-18d1-46e2-b517-cc6d613f831d
+[2025-10-22T13:35:21.551+0000] {subprocess.py:93} INFO - 	confs: [default]
+[2025-10-22T13:35:21.554+0000] {subprocess.py:93} INFO - 	0 artifacts copied, 3 already retrieved (0kB/4ms)
+[2025-10-22T13:35:21.701+0000] {subprocess.py:93} INFO - 25/10/22 13:35:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2025-10-22T13:35:21.841+0000] {subprocess.py:93} INFO - Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[2025-10-22T13:35:21.842+0000] {subprocess.py:93} INFO - Setting default log level to "WARN".
+[2025-10-22T13:35:21.842+0000] {subprocess.py:93} INFO - To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+[2025-10-22T13:34:54.932+0000] {subprocess.py:93} INFO - ✅ Runtime libraries available and MinIO client configured (will still verify files at task runtime).
+[2025-10-22T13:34:55.376+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T13:34:55.377+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T13:34:55.400+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=silver_layer_dag, task_id=setup_silver_environment, execution_date=20251022T121339, start_date=20251022T133519, end_date=20251022T133455
+[2025-10-22T13:35:24.683+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T13:35:24.701+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T13:35:24.703+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

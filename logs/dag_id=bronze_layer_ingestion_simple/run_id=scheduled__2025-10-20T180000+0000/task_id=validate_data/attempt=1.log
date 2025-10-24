@@ -1,0 +1,70 @@
+[2025-10-22T09:38:47.118+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T09:38:47.136+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:47.142+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T09:38:47.143+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T09:38:47.154+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): validate_data> on 2025-10-20 18:00:00+00:00
+[2025-10-22T09:38:47.160+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=326) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T09:38:47.162+0000] {standard_task_runner.py:63} INFO - Started process 327 to run task
+[2025-10-22T09:38:47.162+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'validate_data', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '115', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmpx9jn818a']
+[2025-10-22T09:38:47.164+0000] {standard_task_runner.py:91} INFO - Job 115: Subtask validate_data
+[2025-10-22T09:38:47.179+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T09:38:47.206+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [running]> on host 0586f0d5111d
+[2025-10-22T09:38:47.273+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='validate_data' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T09:38:47.274+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T09:38:47.284+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T09:38:47.285+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Validating Bronze Layer Data ====="\n        python3 - <<\'PY\'\nfrom minio import Minio\nclient = Minio(\'minio:9000\', access_key=\'minioadmin\', secret_key=\'minioadmin\', secure=False)\nobjects = list(client.list_objects(\'bronze\', recursive=True))\nprint(f"✅ Found {len(objects)} objects in \'bronze\' bucket.")\nfor obj in objects[-5:]:\n    print(f"  - {obj.object_name} ({obj.size} bytes)")\nprint("✅ Bronze layer validation completed successfully.")\nPY\n        echo "Bronze layer ingestion completed successfully!"\n        ']
+[2025-10-22T09:38:47.295+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T09:38:47.297+0000] {subprocess.py:93} INFO - ===== Validating Bronze Layer Data =====
+[2025-10-22T09:38:48.005+0000] {subprocess.py:93} INFO - ✅ Found 68 objects in 'bronze' bucket.
+[2025-10-22T09:38:48.005+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_093843/olist_order_reviews_dataset.csv (14451670 bytes)
+[2025-10-22T09:38:48.006+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_093843/olist_orders_dataset.csv (17654914 bytes)
+[2025-10-22T09:38:48.006+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_093843/olist_products_dataset.csv (2379446 bytes)
+[2025-10-22T09:38:48.006+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_093843/olist_sellers_dataset.csv (174703 bytes)
+[2025-10-22T09:38:48.007+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_093843/product_category_name_translation.csv (2613 bytes)
+[2025-10-22T09:38:48.007+0000] {subprocess.py:93} INFO - ✅ Bronze layer validation completed successfully.
+[2025-10-22T09:38:48.022+0000] {subprocess.py:93} INFO - Bronze layer ingestion completed successfully!
+[2025-10-22T09:38:48.023+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T09:38:48.023+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T09:38:48.045+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=validate_data, execution_date=20251020T180000, start_date=20251022T093847, end_date=20251022T093848
+[2025-10-22T09:38:48.098+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T09:38:48.114+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T09:38:48.117+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-10-22T10:11:13.472+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:11:13.492+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:11:13.498+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [queued]>
+[2025-10-22T10:11:13.498+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T10:11:13.509+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): validate_data> on 2025-10-20 18:00:00+00:00
+[2025-10-22T10:11:13.516+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=283) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:11:13.517+0000] {standard_task_runner.py:63} INFO - Started process 284 to run task
+[2025-10-22T10:11:13.517+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'validate_data', 'scheduled__2025-10-20T18:00:00+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp2w4wsxeb']
+[2025-10-22T10:11:13.519+0000] {standard_task_runner.py:91} INFO - Job 11: Subtask validate_data
+[2025-10-22T10:11:13.531+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:11:13.560+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.validate_data scheduled__2025-10-20T18:00:00+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:11:13.625+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='validate_data' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-20T18:00:00+00:00'
+[2025-10-22T10:11:13.626+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:11:13.637+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:11:13.638+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Validating Bronze Layer Data ====="\n        python3 - <<\'PY\'\nfrom minio import Minio\nclient = Minio(\'minio:9000\', access_key=\'minioadmin\', secret_key=\'minioadmin\', secure=False)\nobjects = list(client.list_objects(\'bronze\', recursive=True))\nprint(f"✅ Found {len(objects)} objects in \'bronze\' bucket.")\nfor obj in objects[-5:]:\n    print(f"  - {obj.object_name} ({obj.size} bytes)")\nprint("✅ Bronze layer validation completed successfully.")\nPY\n        echo "Bronze layer ingestion completed successfully!"\n        ']
+[2025-10-22T10:11:13.650+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:11:13.652+0000] {subprocess.py:93} INFO - ===== Validating Bronze Layer Data =====
+[2025-10-22T10:11:14.439+0000] {subprocess.py:93} INFO - ✅ Found 90 objects in 'bronze' bucket.
+[2025-10-22T10:11:14.439+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_101110/olist_order_reviews_dataset.csv (14451670 bytes)
+[2025-10-22T10:11:14.439+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_101110/olist_orders_dataset.csv (17654914 bytes)
+[2025-10-22T10:11:14.440+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_101110/olist_products_dataset.csv (2379446 bytes)
+[2025-10-22T10:11:14.440+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_101110/olist_sellers_dataset.csv (174703 bytes)
+[2025-10-22T10:11:14.440+0000] {subprocess.py:93} INFO -   - kaggle_data/20251022_101110/product_category_name_translation.csv (2613 bytes)
+[2025-10-22T10:11:14.441+0000] {subprocess.py:93} INFO - ✅ Bronze layer validation completed successfully.
+[2025-10-22T10:11:14.458+0000] {subprocess.py:93} INFO - Bronze layer ingestion completed successfully!
+[2025-10-22T10:11:14.458+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T10:11:14.459+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:11:14.480+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=validate_data, execution_date=20251020T180000, start_date=20251022T101113, end_date=20251022T101114
+[2025-10-22T10:11:14.532+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T10:11:14.548+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:11:14.551+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

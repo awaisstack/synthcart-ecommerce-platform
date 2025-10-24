@@ -1,0 +1,40 @@
+[2025-10-22T12:13:43.087+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T12:13:43.100+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_dag_simple.setup_environment manual__2025-10-22T12:11:23.145267+00:00 [queued]>
+[2025-10-22T12:13:43.105+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_dag_simple.setup_environment manual__2025-10-22T12:11:23.145267+00:00 [queued]>
+[2025-10-22T12:13:43.106+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T12:13:43.115+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_environment> on 2025-10-22 12:11:23.145267+00:00
+[2025-10-22T12:13:43.120+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=1687) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T12:13:43.121+0000] {standard_task_runner.py:63} INFO - Started process 1688 to run task
+[2025-10-22T12:13:43.121+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_dag_simple', 'setup_environment', 'manual__2025-10-22T12:11:23.145267+00:00', '--job-id', '52', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp6unkzr6b']
+[2025-10-22T12:13:43.123+0000] {standard_task_runner.py:91} INFO - Job 52: Subtask setup_environment
+[2025-10-22T12:13:43.133+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T12:13:43.155+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_dag_simple.setup_environment manual__2025-10-22T12:11:23.145267+00:00 [running]> on host 106a2f4786f4
+[2025-10-22T12:13:43.213+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_dag_simple' AIRFLOW_CTX_TASK_ID='setup_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-22T12:11:23.145267+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-22T12:11:23.145267+00:00'
+[2025-10-22T12:13:43.214+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T12:13:43.223+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T12:13:43.224+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Setting up environment ====="\n        echo "Tip: For production, install packages via Docker image (AIRFLOW__CORE__PIP_ADDITIONAL_REQUIREMENTS)."\n\n        # Ensure Kaggle credentials exist\n        if [ -f /opt/***/dags/kaggle.json ]; then\n            mkdir -p ~/.kaggle\n            cp /opt/***/dags/kaggle.json ~/.kaggle/kaggle.json\n            chmod 600 ~/.kaggle/kaggle.json\n            echo "✅ Kaggle credentials copied successfully."\n        else\n            echo "⚠️ kaggle.json NOT found at /opt/***/dags/kaggle.json — please add it if you need Kaggle downloads."\n        fi\n\n        echo "Verifying DAG folder structure..."\n        ls -la /opt/***/dags/bronze || true\n\n        echo "Testing package imports..."\n        python3 - <<\'PY\'\nimport sys\ntry:\n    import minio, requests\n    print("✅ Required packages found: minio, requests")\n    try:\n        import kaggle\n        print("✅ Kaggle module available")\n    except ImportError:\n        print("⚠️ Kaggle not installed (expected if not using Kaggle tasks)")\nexcept Exception as e:\n    print("❌ Package test failed:", e)\n    sys.exit(0)\nPY\n\n        echo "Environment setup complete."\n        ']
+[2025-10-22T12:13:43.233+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T12:13:43.234+0000] {subprocess.py:93} INFO - ===== Setting up environment =====
+[2025-10-22T12:13:43.235+0000] {subprocess.py:93} INFO - Tip: For production, install packages via Docker image (AIRFLOW__CORE__PIP_ADDITIONAL_REQUIREMENTS).
+[2025-10-22T12:13:43.243+0000] {subprocess.py:93} INFO - ✅ Kaggle credentials copied successfully.
+[2025-10-22T12:13:43.243+0000] {subprocess.py:93} INFO - Verifying DAG folder structure...
+[2025-10-22T12:13:43.251+0000] {subprocess.py:93} INFO - total 20
+[2025-10-22T12:13:43.251+0000] {subprocess.py:93} INFO - drwxrwxrwx 1 root root 4096 Oct 20 20:31 .
+[2025-10-22T12:13:43.251+0000] {subprocess.py:93} INFO - drwxrwxrwx 1 root root 4096 Oct 22 12:01 ..
+[2025-10-22T12:13:43.251+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 3242 Oct 20 20:17 README.md
+[2025-10-22T12:13:43.252+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 4227 Oct 20 20:17 api_ingestion.py
+[2025-10-22T12:13:43.252+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 4363 Oct 20 20:17 kaggle_ingestion.py
+[2025-10-22T12:13:43.252+0000] {subprocess.py:93} INFO - Testing package imports...
+[2025-10-22T12:13:43.714+0000] {subprocess.py:93} INFO - ✅ Required packages found: minio, requests
+[2025-10-22T12:13:43.714+0000] {subprocess.py:93} INFO - ✅ Kaggle module available
+[2025-10-22T12:13:43.740+0000] {subprocess.py:93} INFO - Environment setup complete.
+[2025-10-22T12:13:43.740+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T12:13:43.741+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T12:13:43.760+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_dag_simple, task_id=setup_environment, execution_date=20251022T121123, start_date=20251022T121343, end_date=20251022T121343
+[2025-10-22T12:13:43.775+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T12:13:43.792+0000] {taskinstance.py:3482} INFO - 2 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T12:13:43.794+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

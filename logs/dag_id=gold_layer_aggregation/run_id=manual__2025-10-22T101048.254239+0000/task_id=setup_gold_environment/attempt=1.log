@@ -1,0 +1,45 @@
+[2025-10-22T10:20:59.814+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:20:59.832+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: gold_layer_aggregation.setup_gold_environment manual__2025-10-22T10:10:48.254239+00:00 [queued]>
+[2025-10-22T10:20:59.837+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: gold_layer_aggregation.setup_gold_environment manual__2025-10-22T10:10:48.254239+00:00 [queued]>
+[2025-10-22T10:20:59.838+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T10:20:59.850+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_gold_environment> on 2025-10-22 10:10:48.254239+00:00
+[2025-10-22T10:20:59.856+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=606) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:20:59.857+0000] {standard_task_runner.py:63} INFO - Started process 607 to run task
+[2025-10-22T10:20:59.857+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'gold_layer_aggregation', 'setup_gold_environment', 'manual__2025-10-22T10:10:48.254239+00:00', '--job-id', '25', '--raw', '--subdir', 'DAGS_FOLDER/gold_dag.py', '--cfg-path', '/tmp/tmpkumqbwrp']
+[2025-10-22T10:20:59.859+0000] {standard_task_runner.py:91} INFO - Job 25: Subtask setup_gold_environment
+[2025-10-22T10:20:59.871+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:20:59.899+0000] {task_command.py:426} INFO - Running <TaskInstance: gold_layer_aggregation.setup_gold_environment manual__2025-10-22T10:10:48.254239+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:20:59.973+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='ghazal_e_ashar' AIRFLOW_CTX_DAG_ID='gold_layer_aggregation' AIRFLOW_CTX_TASK_ID='setup_gold_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-22T10:10:48.254239+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-22T10:10:48.254239+00:00'
+[2025-10-22T10:20:59.975+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:20:59.985+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:20:59.986+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\necho "Gold environment bootstrap (no package install). Running quick config check..."\npython3 - <<\'PY\'\n\nimport os\nfrom pyspark.sql import SparkSession, functions as F\n\nos.environ[\'AWS_ACCESS_KEY_ID\'] = \'minioadmin\'\nos.environ[\'AWS_SECRET_ACCESS_KEY\'] = \'minioadmin\'\nos.environ[\'SPARK_LOCAL_IP\'] = \'127.0.0.1\'\n\nPOSTGRES_URL = "jdbc:postgresql://postgres:5432/***"\nPOSTGRES_PROPERTIES = {\n    "user": "***",\n    "password": "***",\n    "driver": "org.postgresql.Driver"\n}\n\nspark = SparkSession.builder \\\n    .appName("GoldLayerProcessing") \\\n    .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \\\n    .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.secret.key", "minioadmin") \\\n    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \\\n    .config("spark.jars.packages", \n            "org.apache.hadoop:hadoop-aws:3.3.4,"\n            "com.amazonaws:aws-java-sdk-s3:1.12.570,"\n            "org.postgresql:postgresql:42.7.1") \\\n    .config("spark.sql.warehouse.dir", "/tmp/spark-warehouse") \\\n    .getOrCreate()\n\nfrom minio import Minio\nclient = Minio(\'minio:9000\', access_key=\'minioadmin\', secret_key=\'minioadmin\', secure=False)\n\nif not client.bucket_exists(\'gold\'):\n    client.make_bucket(\'gold\')\n    print("Gold bucket created")\nelse:\n    print("Gold bucket already exists")\n\nSILVER_PATH = "s3a://silver"\nGOLD_PATH = "s3a://gold"\n\nprint("Spark session established and MinIO check completed.")\nspark.stop()\nPY\necho "Gold environment setup completed"']
+[2025-10-22T10:20:59.997+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:20:59.999+0000] {subprocess.py:93} INFO - Gold environment bootstrap (no package install). Running quick config check...
+[2025-10-22T10:21:00.415+0000] {subprocess.py:93} INFO - /home/***/.local/lib/python3.12/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2025-10-22T10:21:00.416+0000] {subprocess.py:93} INFO - JAVA_HOME is not set
+[2025-10-22T10:21:00.500+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-10-22T10:21:00.500+0000] {subprocess.py:93} INFO -   File "<stdin>", line 27, in <module>
+[2025-10-22T10:21:00.500+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/sql/session.py", line 497, in getOrCreate
+[2025-10-22T10:21:00.501+0000] {subprocess.py:93} INFO -     sc = SparkContext.getOrCreate(sparkConf)
+[2025-10-22T10:21:00.501+0000] {subprocess.py:93} INFO -          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-10-22T10:21:00.501+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/context.py", line 515, in getOrCreate
+[2025-10-22T10:21:00.502+0000] {subprocess.py:93} INFO -     SparkContext(conf=conf or SparkConf())
+[2025-10-22T10:21:00.502+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/context.py", line 201, in __init__
+[2025-10-22T10:21:00.502+0000] {subprocess.py:93} INFO -     SparkContext._ensure_initialized(self, gateway=gateway, conf=conf)
+[2025-10-22T10:21:00.503+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/context.py", line 436, in _ensure_initialized
+[2025-10-22T10:21:00.503+0000] {subprocess.py:93} INFO -     SparkContext._gateway = gateway or launch_gateway(conf)
+[2025-10-22T10:21:00.503+0000] {subprocess.py:93} INFO -                                        ^^^^^^^^^^^^^^^^^^^^
+[2025-10-22T10:21:00.503+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.12/site-packages/pyspark/java_gateway.py", line 107, in launch_gateway
+[2025-10-22T10:21:00.504+0000] {subprocess.py:93} INFO -     raise PySparkRuntimeError(
+[2025-10-22T10:21:00.504+0000] {subprocess.py:93} INFO - pyspark.errors.exceptions.base.PySparkRuntimeError: [JAVA_GATEWAY_EXITED] Java gateway process exited before sending its port number.
+[2025-10-22T10:21:00.532+0000] {subprocess.py:93} INFO - Gold environment setup completed
+[2025-10-22T10:21:00.533+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T10:21:00.534+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:21:00.555+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=gold_layer_aggregation, task_id=setup_gold_environment, execution_date=20251022T101048, start_date=20251022T102059, end_date=20251022T102100
+[2025-10-22T10:21:00.592+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T10:21:00.613+0000] {taskinstance.py:3482} INFO - 3 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:21:00.615+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

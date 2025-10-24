@@ -1,0 +1,40 @@
+[2025-10-22T10:43:07.779+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-22T10:43:07.798+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.setup_environment manual__2025-10-22T10:43:06.830211+00:00 [queued]>
+[2025-10-22T10:43:07.804+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_layer_ingestion_simple.setup_environment manual__2025-10-22T10:43:06.830211+00:00 [queued]>
+[2025-10-22T10:43:07.804+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 3
+[2025-10-22T10:43:07.816+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): setup_environment> on 2025-10-22 10:43:06.830211+00:00
+[2025-10-22T10:43:07.823+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=1030) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-10-22T10:43:07.825+0000] {standard_task_runner.py:63} INFO - Started process 1031 to run task
+[2025-10-22T10:43:07.825+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_layer_ingestion_simple', 'setup_environment', 'manual__2025-10-22T10:43:06.830211+00:00', '--job-id', '39', '--raw', '--subdir', 'DAGS_FOLDER/bronze_dag_simple.py', '--cfg-path', '/tmp/tmp8u7bue5d']
+[2025-10-22T10:43:07.827+0000] {standard_task_runner.py:91} INFO - Job 39: Subtask setup_environment
+[2025-10-22T10:43:07.840+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195: DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+  SQL_ALCHEMY_CONN = conf.get("database", "SQL_ALCHEMY_CONN")
+
+[2025-10-22T10:43:07.869+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_layer_ingestion_simple.setup_environment manual__2025-10-22T10:43:06.830211+00:00 [running]> on host 7df8b8276d1d
+[2025-10-22T10:43:07.944+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afnan_khan' AIRFLOW_CTX_DAG_ID='bronze_layer_ingestion_simple' AIRFLOW_CTX_TASK_ID='setup_environment' AIRFLOW_CTX_EXECUTION_DATE='2025-10-22T10:43:06.830211+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-22T10:43:06.830211+00:00'
+[2025-10-22T10:43:07.945+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-22T10:43:07.955+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-22T10:43:07.957+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', '\n        echo "===== Setting up environment ====="\n        echo "Tip: For production, install packages via Docker image (AIRFLOW__CORE__PIP_ADDITIONAL_REQUIREMENTS)."\n\n        # Ensure Kaggle credentials exist\n        if [ -f /opt/***/dags/kaggle.json ]; then\n            mkdir -p ~/.kaggle\n            cp /opt/***/dags/kaggle.json ~/.kaggle/kaggle.json\n            chmod 600 ~/.kaggle/kaggle.json\n            echo "✅ Kaggle credentials copied successfully."\n        else\n            echo "⚠️ kaggle.json NOT found at /opt/***/dags/kaggle.json — please add it if you need Kaggle downloads."\n        fi\n\n        echo "Verifying DAG folder structure..."\n        ls -la /opt/***/dags/bronze || true\n\n        echo "Testing package imports..."\n        python3 - <<\'PY\'\nimport sys\ntry:\n    import minio, requests\n    print("✅ Required packages found: minio, requests")\n    try:\n        import kaggle\n        print("✅ Kaggle module available")\n    except ImportError:\n        print("⚠️ Kaggle not installed (expected if not using Kaggle tasks)")\nexcept Exception as e:\n    print("❌ Package test failed:", e)\n    sys.exit(0)\nPY\n\n        echo "Environment setup complete."\n        ']
+[2025-10-22T10:43:07.967+0000] {subprocess.py:86} INFO - Output:
+[2025-10-22T10:43:07.969+0000] {subprocess.py:93} INFO - ===== Setting up environment =====
+[2025-10-22T10:43:07.970+0000] {subprocess.py:93} INFO - Tip: For production, install packages via Docker image (AIRFLOW__CORE__PIP_ADDITIONAL_REQUIREMENTS).
+[2025-10-22T10:43:07.986+0000] {subprocess.py:93} INFO - ✅ Kaggle credentials copied successfully.
+[2025-10-22T10:43:07.987+0000] {subprocess.py:93} INFO - Verifying DAG folder structure...
+[2025-10-22T10:43:07.996+0000] {subprocess.py:93} INFO - total 20
+[2025-10-22T10:43:07.996+0000] {subprocess.py:93} INFO - drwxrwxrwx 1 root root 4096 Oct 20 20:31 .
+[2025-10-22T10:43:07.997+0000] {subprocess.py:93} INFO - drwxrwxrwx 1 root root 4096 Oct 21 19:00 ..
+[2025-10-22T10:43:07.997+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 3242 Oct 20 20:17 README.md
+[2025-10-22T10:43:07.997+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 4227 Oct 20 20:17 api_ingestion.py
+[2025-10-22T10:43:07.998+0000] {subprocess.py:93} INFO - -rwxrwxrwx 1 root root 4363 Oct 20 20:17 kaggle_ingestion.py
+[2025-10-22T10:43:07.998+0000] {subprocess.py:93} INFO - Testing package imports...
+[2025-10-22T10:43:08.667+0000] {subprocess.py:93} INFO - ✅ Required packages found: minio, requests
+[2025-10-22T10:43:08.668+0000] {subprocess.py:93} INFO - ✅ Kaggle module available
+[2025-10-22T10:43:08.702+0000] {subprocess.py:93} INFO - Environment setup complete.
+[2025-10-22T10:43:08.703+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-22T10:43:08.704+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-22T10:43:08.725+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=bronze_layer_ingestion_simple, task_id=setup_environment, execution_date=20251022T104306, start_date=20251022T104307, end_date=20251022T104308
+[2025-10-22T10:43:08.761+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-22T10:43:08.784+0000] {taskinstance.py:3482} INFO - 2 downstream tasks scheduled from follow-on schedule check
+[2025-10-22T10:43:08.787+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
