@@ -1,151 +1,243 @@
-# 🛒 SynthCart E-Commerce Data Engineering Platform
+# SynthCart E-Commerce Data Engineering Platform
 
-## 📘 Overview
-This project simulates a **modern data engineering architecture** for an e-commerce platform — built collaboratively by the Data Engineering (DE) and Data Analysis (DA) teams.
+## Overview
+This project simulates a modern data engineering architecture for an e-commerce platform, built collaboratively by the Data Engineering (DE) and Data Analysis (DA) teams.
 
-It implements an end-to-end **Medallion Architecture** (Bronze → Silver → Gold) using modern open-source tools.
+It implements an end-to-end Medallion Architecture (Bronze → Silver → Gold) using modern open-source tools inside a fully containerized Docker environment.
 
----
-
-## 🏗️ Architecture Components
+## Architecture Components
 
 | Layer | Tool | Description |
 |-------|------|-------------|
-| Data Lake | **MinIO** | Stores raw → cleaned → curated data |
-| Workflow Orchestration | **Apache Airflow** | Automates ETL pipelines (Bronze, Silver, Gold) |
-| Data Warehouse | **PostgreSQL** | Stores final business-ready tables |
-| BI Layer | **Power BI** | Used by DA team for analytics dashboards |
-| Infrastructure | **Docker Compose** | Containerized setup for easy reproducibility |
+| Data Lake | MinIO | Object storage for raw → cleaned → curated data |
+| Workflow Orchestration | Apache Airflow | Automates ETL pipelines (Bronze, Silver, Gold) |
+| Data Warehouse | PostgreSQL | Stores final business-ready tables |
+| BI Layer | Power BI | Used by DA team for interactive dashboards |
+| Infrastructure | Docker Compose | Containerized setup for full reproducibility |
 
----
+## Setup Instructions (Windows)
 
-## ⚙️ Setup Instructions (Windows)
+### Step 1: Prerequisites
+Before starting, ensure you have:
+- Docker Desktop (running)
+- VS Code (recommended)
+- Internet connection
 
-### 🧩 Step 1 — Prerequisites
-Before starting, make sure you have:
-- 🐳 **Docker Desktop** (running)
-- 💻 **VS Code** (optional but recommended)
-- 🌐 **Internet Connection**
-
----
-
-### 🧱 Step 2 — Clone the Repository
-Open **PowerShell** and run:
-
+### Step 2: Clone the Repository
+Open PowerShell and run:
 ```bash
 cd Desktop
 git clone https://github.com/awaisstack/synthcart-ecommerce-platform.git
-cd synthcart-ecommerce-platform/airflow
+cd synthcart-ecommerce-platform
 ```
 
----
-
-### 🚀 Step 3 — Start the Environment
+### Step 3: Start the Environment
 Make sure Docker Desktop is running, then execute:
-
 ```bash
 docker compose up
 ```
 
-This command will:
-* Start PostgreSQL, Redis, and Airflow
-* Connect to your MinIO storage
-* Create all containers automatically
+This will automatically:
+- Start PostgreSQL, Redis, MinIO, and Airflow
+- Connect all services together
+- Run in a self-contained local environment
 
----
-
-### 🌐 Step 4 — Access the Services
+### Step 4: Access the Services
 
 | Service | URL | Username | Password |
 |---------|-----|----------|----------|
-| Airflow Web UI | http://localhost:8080 | `airflow` | `airflow` |
-| MinIO Console | http://localhost:9001 | `minioadmin` | `minioadmin` |
-| PostgreSQL (via pgAdmin) | `localhost:5432` | `postgres` | your local password |
+| Airflow Web UI | http://localhost:8080 | airflow | airflow |
+| MinIO Console | http://localhost:9001 | minioadmin | minioadmin |
+| PostgreSQL | localhost:5432 | airflow | airflow |
 
----
-
-## 🗂️ Project Structure
-
+## Project Structure
 ```
 airflow/
 │
-├── config/                # Airflow configuration files
-├── dags/                  # Python DAGs (Bronze, Silver, Gold)
-├── logs/                  # Auto-generated Airflow logs
-├── minio-data/            # Local data lake storage
+├── .env                       # Environment variables
+├── docker-compose.yaml         # Docker setup
+├── README.md                   # Documentation
+│
+├── config/                     # Airflow configs
+├── dags/                       # ETL DAGs
+│   ├── bronze_dag_simple.py
+│   ├── silver_layer_dag.py
+│   └── gold_dag.py
+│
+├── logs/                       # Auto-generated Airflow logs
+├── minio-data/                 # Data lake (mounted into MinIO)
 │   ├── bronze/
 │   ├── silver/
 │   └── gold/
-├── plugins/               # Custom Airflow plugins (if any)
-├── .env                   # Environment variables
-└── docker-compose.yaml    # Docker setup file
+│
+├── plugins/                    # Custom Airflow plugins
+└── gold_exports/               # Deliverables for DA team
+    ├── gold_dump.sql
+    ├── dim_customers.parquet
+    ├── dim_sellers.parquet
+    ├── dim_products.parquet
+    ├── dim_date.parquet
+    └── fact_orders.parquet
 ```
 
----
+## How It Works
 
-## 🧠 How It Works (Conceptually)
+**Bronze Layer (Raw Data)**
+- Ingests from Kaggle datasets + DummyJSON API
+- Stores raw files into MinIO → /bronze/
 
-1. **Bronze Layer (Raw Data)**
-   * Pulls data from Kaggle (CSV) and DummyJSON API
-   * Saves raw files into MinIO `bronze/`
+**Silver Layer (Cleaned Data)**
+- Cleans and validates data using PySpark
+- Writes processed data into /silver/
 
-2. **Silver Layer (Cleaned Data)**
-   * Cleans and validates data using PySpark
-   * Writes processed data into MinIO `silver/`
+**Gold Layer (Business Tables)**
+- Aggregates and joins into star-schema: dim_customers, dim_sellers, dim_products, dim_date, fact_orders
+- Writes to /gold/ in MinIO
 
-3. **Gold Layer (Business Tables)**
-   * Aggregates data and writes final dimension & fact tables
-   * Loads them into PostgreSQL (`synthcart_dw`)
+**Note:** The gold layer does not automatically load tables into PostgreSQL. Users need to perform this step manually if required.
 
-4. **Data Analysis (Power BI)**
-   * Power BI connects to PostgreSQL and visualizes insights
+**Verification**
+- Confirm in Airflow logs that all tasks completed successfully
+- Query PostgreSQL after loading: `SELECT * FROM fact_orders LIMIT 5;`
 
----
+## PostgreSQL Setup & Manual Loading
 
-## ✅ Verification Checklist
+PostgreSQL is already provided as part of the `docker-compose.yml` setup and runs automatically when you start the environment.
+
+### Manual Loading Guide
+
+1. Start the Docker environment:
+```bash
+docker compose up
+```
+
+2. Find your PostgreSQL container name:
+```bash
+docker ps
+```
+
+3. Access the PostgreSQL container:
+```bash
+docker exec -it <postgres_container_name> psql -U airflow -d airflow
+```
+
+4. Create the target database (if needed):
+```sql
+CREATE DATABASE gold_db;
+\c gold_db
+```
+
+5. Exit PostgreSQL and load the SQL dump from your host machine:
+```bash
+docker exec -i <postgres_container_name> psql -U airflow -d gold_db < gold_exports/gold_dump.sql
+```
+
+6. Verify the tables were loaded:
+```bash
+docker exec -it <postgres_container_name> psql -U airflow -d gold_db
+```
+```sql
+\dt
+SELECT * FROM fact_orders LIMIT 5;
+```
+
+7. Done! Your gold tables are now available in PostgreSQL.
+
+## Verification Checklist
 
 | Tool | Check | Command / URL |
 |------|-------|---------------|
 | Docker | Containers running | `docker ps` |
-| MinIO | Opens in browser | http://localhost:9001 |
-| PostgreSQL | Database exists | Use `pgAdmin` → `synthcart_dw` |
-| Airflow | Dashboard active | http://localhost:8080 |
-| GitHub | Repo online | Visit your repo URL |
+| Airflow | Web UI active | http://localhost:8080 |
+| MinIO | Buckets visible | http://localhost:9001 |
+| PostgreSQL | Tables exist | Connect with pgAdmin / Power BI |
 
----
+## Data Analysis Team Guide
 
-## 🤝 Team Collaboration Notes
+The Gold Layer is finalized and ready for your analysis. You can choose between PostgreSQL or Parquet files to work with the curated data.
 
-Each teammate only needs to:
-1. Clone this repo
-2. Run `docker compose up` inside the `/airflow` folder
-3. Access the Airflow and MinIO interfaces
+### Option A: Connect Power BI to PostgreSQL (Recommended)
 
-They do NOT need to manually install:
-* MinIO
-* Airflow
-* PostgreSQL
+You can directly query the five curated tables:
 
-Everything runs automatically inside Docker.
+| Table | Description |
+|-------|-------------|
+| dim_customers | Customer info, reviews, avg spend |
+| dim_sellers | Seller profiles and performance |
+| dim_products | Product categories and attributes |
+| dim_date | Calendar table for time-series |
+| fact_orders | Transaction-level data linked to all dimensions |
 
----
+**Connection Details**
 
-## 🧩 Future Tasks
+| Parameter | Value |
+|-----------|-------|
+| Host | localhost |
+| Port | 5432 |
+| Database | gold_db (or airflow) |
+| Username | airflow |
+| Password | airflow |
 
-* Add Airflow DAGs for Bronze, Silver, Gold
-* Create connection configs for MinIO and PostgreSQL
-* Add sample ingestion scripts
-* Document transformation logic in `/docs`
+**Steps to Connect:**
 
----
+1. Load the data into PostgreSQL using the manual loading guide above
 
-## 🧾 Credits
+2. Open Power BI Desktop
 
-**Data Engineering Team:**
-* Muhammad Awais (Infrastructure & Setup)
-* Afnan Khan (Bronze Layer)
-* Farheen Muzaffar (Silver Layer)
-* Ghazal E Ashar (Gold Layer)
+3. Get Data → PostgreSQL Database
 
-**Data Analysis Team:**
-* Abdur Rehman, Aqsa Majeed, Ayesha Saleh, Salman Qureshi, Saud Ijaz, Wania Nafees, Zohair Raza
+4. Enter the connection details above
+
+5. Select the tables you want to import
+
+### Option B: Use Parquet Files Directly
+
+If you prefer not to use PostgreSQL, you can work directly with the Parquet exports:
+
+**Path:** `/gold_exports/`
+
+**Files:**
+- dim_customers.parquet
+- dim_sellers.parquet
+- dim_products.parquet
+- dim_date.parquet
+- fact_orders.parquet
+
+Load them in Power BI → Get Data → Parquet, or read them in Python / Pandas.
+
+## Final Deliverables
+
+These files were manually exported from the completed Gold Layer after the Airflow DAGs executed successfully:
+
+| File Type | Location | Purpose |
+|-----------|----------|---------|
+| gold_dump.sql | /gold_exports/ | PostgreSQL dump (all 5 tables) |
+| *.parquet files | /gold_exports/ | Equivalent datasets for BI tools |
+
+## Suggested Dashboards
+
+| Dashboard | Example KPIs |
+|-----------|--------------|
+| Sales Overview | Total Revenue, Avg Order Value, Orders by Category |
+| Customer Insights | Repeat Customers, Avg Review Scores |
+| Product Analysis | Top Categories, Sales by Price Range |
+| Seller Performance | Avg Ratings, Order Fulfillment |
+| Delivery Metrics | Avg Delivery Days, Delays, Regional Trends |
+
+## Credits
+
+**Data Engineering Team**
+- Muhammad Awais (Infrastructure, Airflow & Gold Layer)
+- Afnan Khan (Bronze Layer)
+- Farheen Muzaffar (Silver Layer)
+- Ghazal E Ashar (Gold Layer Transformations)
+
+**Data Analysis Team**
+- Abdur Rehman
+- Aqsa Majeed
+- Ayesha Saleh
+- Salman Qureshi
+- Saud Ijaz
+- Wania Nafees
+- Zohair Raza
+```
