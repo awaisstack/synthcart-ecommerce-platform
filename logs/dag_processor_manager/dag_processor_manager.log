@@ -26456,3 +26456,91 @@ File Path                                    PID    Runtime      # DAGs    # Err
 /opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.58s           2025-10-24T14:37:23
 /opt/airflow/dags/silver_layer_dag.py                                 1           0  0.33s           2025-10-24T14:37:23
 ================================================================================
+[2025-10-24T14:38:08.145+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.76s           2025-10-24T14:37:54
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.72s           2025-10-24T14:37:54
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.34s           2025-10-24T14:37:55
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.09s           2025-10-24T14:37:55
+================================================================================
+[2025-10-24T14:38:41.447+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.55s           2025-10-24T14:38:25
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.51s           2025-10-24T14:38:25
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.40s           2025-10-24T14:38:26
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.10s           2025-10-24T14:38:25
+================================================================================
+[2025-10-24T14:39:14.959+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.53s           2025-10-24T14:38:56
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.50s           2025-10-24T14:38:56
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.32s           2025-10-24T14:38:57
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.11s           2025-10-24T14:38:57
+================================================================================
+[2025-10-24T14:39:46.587+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.56s           2025-10-24T14:39:27
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.56s           2025-10-24T14:39:27
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.32s           2025-10-24T14:39:27
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.22s           2025-10-24T14:39:27
+================================================================================
+[2025-10-24T14:40:19.407+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.60s           2025-10-24T14:39:58
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.56s           2025-10-24T14:39:58
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.34s           2025-10-24T14:39:58
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.09s           2025-10-24T14:39:58
+================================================================================
+[2025-10-24T14:40:51.588+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.55s           2025-10-24T14:40:28
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.52s           2025-10-24T14:40:28
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.31s           2025-10-24T14:40:29
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.21s           2025-10-24T14:40:29
+================================================================================
+[2025-10-24T14:41:23.797+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.42s           2025-10-24T14:40:59
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.39s           2025-10-24T14:40:59
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.19s           2025-10-24T14:41:00
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.09s           2025-10-24T14:40:59
+================================================================================
+[2025-10-24T14:41:57.728+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                    PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/gold_layer_dag.py                                   1           0  0.37s           2025-10-24T14:41:30
+/opt/airflow/dags/silver/silver_cleaning.py                           0           0  0.36s           2025-10-24T14:41:30
+/opt/airflow/dags/silver_layer_dag.py                                 1           0  0.18s           2025-10-24T14:41:30
+/opt/airflow/dags/bronze_dag_simple.py                                1           0  0.08s           2025-10-24T14:41:30
+================================================================================
